@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sinau Menyimak Basa Jawa</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- LOGIN -->
+    <section id="loginPage" class="page login-page">
+      <div class="login-card">
+        <div class="logo">ꦱꦶ</div>
+        <p class="eyebrow">PEMBELAJARAN BAHASA JAWA</p>
+        <h1>Sinau Menyimak<br>Basa Jawa</h1>
+        <p class="subtitle">Kelas XI · Fase F · Semester 1</p>
+
+        <form id="loginForm">
+          <label for="nama">ID Siswa</label>
+<input
+  id="nama"
+  type="text"
+  placeholder="Masukkan ID siswa"
+  required
+>
+
+<label for="kelas">Password</label>
+<input
+  id="kelas"
+  type="password"
+  placeholder="Masukkan password"
+  required
+>
+
+          <button type="submit" class="btn primary">Mlebet Pembelajaran →</button>
+        </form>
+
+        <p class="prototype-note">PROTOTIPE — login iki durung nganggo database.</p>
+      </div>
+    </section>
+
+    <!-- HOME -->
+    <section id="homePage" class="page hidden">
+      <header class="topbar">
+        <div class="brand">ꦱꦶ <span>Sinau Menyimak</span></div>
+        <button id="logoutBtn" class="logout">Metu</button>
+      </header>
+
+      <main class="container">
+        <div class="welcome">
+          <div>
+            <p class="eyebrow">SUGENG RAWUH</p>
+            <h2 id="welcomeName">Siswa</h2>
+            <p>Siap sinau lan ngembangake katrampilan nyimak Basa Jawa?</p>
+          </div>
+          <div class="student-badge">
+            <span id="welcomeClass">XI</span>
+          </div>
+        </div>
+
+        <div class="progress-card">
+          <div class="progress-head">
+            <span>Progres semester</span>
+            <strong id="progressText">0 / 4 materi</strong>
+          </div>
+          <div class="progress-bar"><div id="progressFill"></div></div>
+        </div>
+
+        <div class="section-title">
+          <p class="eyebrow">PEMBELAJARAN</p>
+          <h2>Semester 1</h2>
+          <p>Pilih materi kanthi urut. Materi sabanjure bakal kabuka sawise tahap sadurunge rampung.</p>
+        </div>
+
+        <div id="lessonList" class="lesson-list"></div>
+      </main>
+    </section>
+<!-- TEACHER DASHBOARD -->
+<section id="teacherPage" class="page hidden">
+  <header class="topbar">
+    <div class="brand">ꦱꦶ <span>Dashboard Guru</span></div>
+    <button id="teacherLogoutBtn" class="logout">Metu</button>
+  </header>
+
+  <main class="container">
+
+    <div class="welcome">
+      <div>
+        <p class="eyebrow">DASHBOARD GURU</p>
+        <h2 id="teacherName">Guru</h2>
+        <p>Kelola siswa lan pantau progres pembelajaran.</p>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <p class="eyebrow">DATA PEMBELAJAR</p>
+      <h2>Daftar Siswa</h2>
+      <p>Data siswa sing wis didaftarkan ing sistem.</p>
+    </div>
+
+    <div class="content-card">
+
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:20px;">
+    <div>
+      <h3 style="margin:0;">Daftar Siswa</h3>
+      <p style="margin:6px 0 0;">Siswa sing wis didaftarkan.</p>
+    </div>
+
+    <button id="addStudentBtn" class="btn primary">
+      + Tambah Siswa
+    </button>
+  </div>
+
+  <div id="studentList">
+    <p>Durung ana data siswa.</p>
+  </div>
+
+</div>
+
+<!-- FORM TAMBAH SISWA -->
+<div id="addStudentForm" class="content-card hidden">
+
+  <p class="eyebrow">DATA SISWA</p>
+  <h2>Tambah Siswa</h2>
+
+  <form id="studentForm">
+
+    <label for="studentName">Nama Siswa</label>
+    <input
+      id="studentName"
+      type="text"
+      placeholder="Contoh: Andi Pratama"
+      required
+    >
+
+    <label for="studentId">ID Siswa</label>
+    <input
+      id="studentId"
+      type="text"
+      placeholder="Contoh: 001"
+      required
+    >
+
+    <label for="studentClass">Kelas</label>
+    <input
+      id="studentClass"
+      type="text"
+      placeholder="Contoh: XI A"
+      required
+    >
+
+    <label for="studentPassword">Password</label>
+    <input
+      id="studentPassword"
+      type="password"
+      placeholder="Password siswa"
+      required
+    >
+
+    <div style="display:flex; gap:10px; margin-top:20px;">
+      <button type="submit" class="btn primary">
+        Simpan Siswa
+      </button>
+
+      <button type="button" id="cancelStudentBtn" class="btn secondary">
+        Batal
+      </button>
+    </div>
+
+  </form>
+
+</div>
+
+  </main>
+</section>
+    <!-- LESSON -->
+    <section id="lessonPage" class="page hidden">
+      <header class="topbar">
+        <button id="backBtn" class="back">← Beranda</button>
+        <div class="brand">Sinau Menyimak</div>
+        <button id="logoutBtn2" class="logout">Metu</button>
+      </header>
+
+      <main class="container lesson-container">
+        <div class="lesson-header">
+          <span id="lessonNumber" class="lesson-number">Materi 1</span>
+          <h1 id="lessonTitle">Judhul Materi</h1>
+          <p id="lessonDescription"></p>
+        </div>
+
+        <div class="stepper">
+          <div class="step active" id="step1"><span>1</span><small>Materi</small></div>
+          <div class="line"></div>
+          <div class="step" id="step2"><span>2</span><small>Simakan</small></div>
+          <div class="line"></div>
+          <div class="step" id="step3"><span>3</span><small>Quizizz</small></div>
+        </div>
+
+        <article id="materialStep" class="content-card">
+          <p class="eyebrow">TAHAP 1</p>
+          <h2>📖 Materi Pembelajaran</h2>
+          <p id="materialText"></p>
+
+          <div class="info-box">
+            <strong>Cathetan:</strong>
+            <p>Wacanen materi kanthi teliti sadurunge nerusake menyang video simakan.</p>
+          </div>
+
+          <button id="toVideoBtn" class="btn primary">Sabanjure: Video Simakan →</button>
+        </article>
+
+        <article id="videoStep" class="content-card hidden">
+          <p class="eyebrow">TAHAP 2</p>
+          <h2>🎬 Video Simakan</h2>
+          <p>Simak video kanthi premati. Ing versi sabanjure, video bisa diganti nganggo video pembelajaranmu dhewe.</p>
+
+          <div class="video-placeholder">
+            <div class="play">▶</div>
+            <strong>Video Simakan</strong>
+            <span>Tempat video pembelajaran</span>
+          </div>
+
+          <label class="check-row">
+            <input type="checkbox" id="watchedCheck">
+            <span>Aku wis nyimak video kanthi premati.</span>
+          </label>
+
+          <button id="toQuizBtn" class="btn primary" disabled>Sabanjure: Quizizz →</button>
+        </article>
+
+        <article id="quizStep" class="content-card hidden">
+          <p class="eyebrow">TAHAP 3</p>
+          <h2>🎮 Quizizz</h2>
+          <p>Saiki wayahe ngukur pemahamanmu saka materi lan video sing wis disimak.</p>
+
+          <div class="quiz-box">
+            <span>QUIZIZZ</span>
+            <h3>Evaluasi Materi</h3>
+            <p>Ing versi final, tombol iki bakal langsung mbukak Quizizz sing wis digawe guru.</p>
+            <button id="quizizzBtn" class="btn secondary">Bukak Quizizz ↗</button>
+          </div>
+
+          <button id="finishBtn" class="btn primary">Rampung lan Bali menyang Beranda ✓</button>
+        </article>
+      </main>
+    </section>
+
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
