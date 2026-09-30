@@ -401,13 +401,44 @@ function markdownToHtml(text) {
     .replace(/\n\n/g, "<br><br>")
     .replace(/\n/g, "<br>");
 }
-function openLesson(id) {
+async function openLesson(id) {
 
   currentLesson =
     lessons.find(lesson => lesson.id === id);
 
   if (!currentLesson) return;
 
+  // Ambil materi terbaru langsung dari Firebase
+  try {
+
+    const materialsSnapshot = await getDocs(
+      collection(db, "materials")
+    );
+
+    if (!materialsSnapshot.empty && id === 1) {
+
+      const data =
+        materialsSnapshot.docs[0].data();
+
+      currentLesson.title =
+        data.title || currentLesson.title;
+
+      currentLesson.description =
+        data.description || currentLesson.description;
+
+      currentLesson.material =
+        data.content || currentLesson.material;
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Gagal mengambil isi materi:",
+      error
+    );
+
+  }
 
   document.getElementById("lessonNumber").textContent =
     `Materi ${currentLesson.id}`;
@@ -419,8 +450,7 @@ function openLesson(id) {
     currentLesson.description;
 
   document.getElementById("materialText").innerHTML =
-  markdownToHtml(currentLesson.material);
-
+    markdownToHtml(currentLesson.material);
 
   document
     .getElementById("materialStep")
@@ -434,17 +464,14 @@ function openLesson(id) {
     .getElementById("quizStep")
     .classList.add("hidden");
 
-
   document.getElementById("watchedCheck").checked = false;
 
   document.getElementById("toQuizBtn").disabled = true;
-
 
   setSteps(1);
 
   show("lessonPage");
 }
-
 
 // ==================================================
 // STEP MATERI / VIDEO / QUIZ
