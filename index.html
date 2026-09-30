@@ -302,9 +302,102 @@
 
 </div>
 
+<!-- FORM EDIT MATERI -->
+<div id="editMaterialForm" class="content-card hidden">
+
+  <p class="eyebrow">PEMBELAJARAN</p>
+  <h2>Edit Materi</h2>
+
+  <form id="editMaterialFormElement">
+
+    <label for="editMaterialTitle">Judul Materi</label>
+    <input
+      id="editMaterialTitle"
+      type="text"
+      required
+    >
+
+    <label for="editMaterialDescription">Deskripsi Materi</label>
+    <textarea
+      id="editMaterialDescription"
+      rows="5"
+      required
+    ></textarea>
+
+    <label for="editMaterialContent">Isi Materi</label>
+    <textarea
+      id="editMaterialContent"
+      rows="12"
+      required
+    ></textarea>
+
+    <div style="display:flex; gap:10px; margin-top:20px;">
+
+      <button type="submit" class="btn primary">
+        Simpan Perubahan
+      </button>
+
+      <button
+        type="button"
+        id="cancelEditMaterialBtn"
+        class="btn secondary"
+      >
+        Batal
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
+
+        class="btn secondary"
+      >
+        Batal
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
+
+<!-- FORM VIDEO MATERI -->
+<div id="videoMaterialForm" class="content-card">
+
+  <p class="eyebrow">VIDEO PEMBELAJARAN</p>
+  <h2>Video Materi 1</h2>
+
+  <p>
+    Masukkan link video YouTube yang akan ditonton siswa.
+  </p>
+
+  <form id="videoForm">
+
+    <label for="videoUrl">Link YouTube</label>
+
+    <input
+      id="videoUrl"
+      type="url"
+      placeholder="https://www.youtube.com/watch?v=..."
+      required
+    >
+
+    <div style="display:flex; gap:10px; margin-top:20px;">
+
+      <button type="submit" class="btn primary">
+        Simpan Video
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
 
   </main>
 </section>
+
     <!-- LESSON -->
     <section id="lessonPage" class="page hidden">
       <header class="topbar">
@@ -346,11 +439,11 @@
           <h2>🎬 Video Simakan</h2>
           <p>Simak video kanthi premati. Ing versi sabanjure, video bisa diganti nganggo video pembelajaranmu dhewe.</p>
 
-          <div class="video-placeholder">
-            <div class="play">▶</div>
-            <strong>Video Simakan</strong>
-            <span>Tempat video pembelajaran</span>
-          </div>
+          <div id="videoContainer" class="video-placeholder">
+
+  <p>Video pembelajaran durung dipasang.</p>
+
+</div>
 
           <label class="check-row">
             <input type="checkbox" id="watchedCheck">

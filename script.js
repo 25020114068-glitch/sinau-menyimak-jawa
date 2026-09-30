@@ -429,6 +429,11 @@ async function openLesson(id) {
       currentLesson.material =
         data.content || currentLesson.material;
 
+        currentLesson.videoUrl =
+  data.videoUrl || "";
+
+  console.log("VIDEO DARI FIREBASE:", data.videoUrl);
+
     }
 
   } catch (error) {
@@ -671,6 +676,72 @@ document
     document
       .getElementById("videoStep")
       .classList.remove("hidden");
+
+    const videoContainer =
+      document.getElementById("videoContainer");
+
+    if (
+      currentLesson &&
+      currentLesson.videoUrl
+    ) {
+
+      let videoId = "";
+
+      try {
+
+        const url =
+          new URL(currentLesson.videoUrl);
+
+        if (url.hostname.includes("youtu.be")) {
+
+          videoId =
+            url.pathname.substring(1);
+
+        } else {
+
+          videoId =
+            url.searchParams.get("v");
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Link YouTube tidak valid:",
+          error
+        );
+
+      }
+
+console.log("VIDEO ID:", videoId);
+
+      if (videoId) {
+        
+videoContainer.innerHTML = `
+  <iframe
+    width="100%"
+    height="400"
+    src="https://www.youtube.com/embed/${videoId}"
+    title="Video Pembelajaran"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen>
+  </iframe>
+`;
+
+      } else {
+
+        videoContainer.innerHTML =
+          "<p>Link video YouTube ora valid.</p>";
+
+      }
+
+    } else {
+
+      videoContainer.innerHTML =
+        "<p>Video pembelajaran durung dipasang.</p>";
+
+    }
 
     setSteps(2);
 
@@ -1060,3 +1131,57 @@ document.getElementById("studentForm").addEventListener("submit", async function
     }
   }
 });
+// SIMPAN VIDEO YOUTUBE
+
+document
+  .getElementById("videoForm")
+  .addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const videoUrl =
+      document.getElementById("videoUrl").value.trim();
+
+    if (!videoUrl) {
+      alert("Link video kudu diisi.");
+      return;
+    }
+
+    try {
+
+      const materialsSnapshot = await getDocs(
+        collection(db, "materials")
+      );
+
+      if (materialsSnapshot.empty) {
+        alert("Materi durung ana.");
+        return;
+      }
+
+      const materialId =
+        materialsSnapshot.docs[0].id;
+
+      await setDoc(
+        doc(db, "materials", materialId),
+        {
+          videoUrl: videoUrl
+        },
+        {
+          merge: true
+        }
+      );
+
+      alert("Video berhasil disimpan!");
+
+    } catch (error) {
+
+      console.error(
+        "Gagal menyimpan video:",
+        error
+      );
+
+      alert("Video gagal disimpan.");
+
+    }
+
+  });
