@@ -87,6 +87,8 @@ let progress = [];
 
 let student = null;
 
+let currentEditingMaterialId = null;
+
 
 // ==================================================
 // FUNGSI PINDAH HALAMAN
@@ -105,8 +107,46 @@ function show(pageId) {
     behavior: "smooth"
   });
 }
+// ==================================================
+// AMBIL MATERI 1 DARI FIREBASE
+// ==================================================
 
+async function loadLesson1FromFirebase() {
 
+  try {
+
+    const materialsSnapshot = await getDocs(
+      collection(db, "materials")
+    );
+
+    if (materialsSnapshot.empty) {
+      return;
+    }
+
+    // Ambil materi pertama
+    const firstMaterial = materialsSnapshot.docs[0];
+    const data = firstMaterial.data();
+
+    // Masukkan data Firebase ke Materi 1
+    lessons[0].title =
+      data.title || lessons[0].title;
+
+    lessons[0].description =
+      data.description || lessons[0].description;
+    lessons[0].material =
+      data.content || lessons[0].material;  
+
+    console.log("Materi 1 dari Firebase:", data);
+
+  } catch (error) {
+
+    console.error(
+      "Gagal mengambil Materi 1:",
+      error
+    );
+
+  }
+}
 // ==================================================
 // MENAMPILKAN MATERI
 // ==================================================
@@ -280,7 +320,83 @@ async function loadStudents() {
 // ==================================================
 // MEMBUKA MATERI
 // ==================================================
+// ==================================================
+// MENAMPILKAN DAFTAR MATERI GURU
+// ==================================================
 
+async function loadMaterials() {
+
+  const materialList =
+    document.getElementById("materialList");
+
+  try {
+
+    const materialsSnapshot =
+      await getDocs(
+        collection(db, "materials")
+      );
+
+    if (materialsSnapshot.empty) {
+
+      materialList.innerHTML =
+        "<p>Durung ana materi.</p>";
+
+      return;
+    }
+
+    let nomor = 1;
+
+    materialList.innerHTML =
+      materialsSnapshot.docs.map(docSnapshot => {
+
+        const data = docSnapshot.data();
+
+        return `
+  <div class="student-row">
+
+    <div>
+      <strong>
+        Materi ${nomor++}: ${data.title || "-"}
+      </strong>
+
+      <p>
+        ${data.description || "-"}
+      </p>
+    </div>
+
+    <button
+      class="btn secondary edit-material-btn"
+      data-id="${docSnapshot.id}"
+    >
+      Edit
+    </button>
+
+  </div>
+`;
+
+      }).join("");
+
+  } catch (error) {
+
+    console.error(
+      "Gagal mengambil materi:",
+      error
+    );
+
+    materialList.innerHTML =
+      "<p>Gagal mengambil data materi.</p>";
+  }
+}
+function markdownToHtml(text) {
+
+  return text
+    .replace(/^### (.*)$/gm, "<h3>$1</h3>")
+    .replace(/^## (.*)$/gm, "<h2>$1</h2>")
+    .replace(/^# (.*)$/gm, "<h1>$1</h1>")
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\n\n/g, "<br><br>")
+    .replace(/\n/g, "<br>");
+}
 function openLesson(id) {
 
   currentLesson =
@@ -299,7 +415,7 @@ function openLesson(id) {
     currentLesson.description;
 
   document.getElementById("materialText").innerHTML =
-    currentLesson.material;
+  markdownToHtml(currentLesson.material);
 
 
   document
@@ -470,31 +586,30 @@ onAuthStateChanged(auth, async user => {
     student.nama || "Guru";
 
   await loadStudents();
+  await loadMaterials();
 
   show("teacherPage");
 
   return;
 
 }
-    // ==================================================
-    // SISWA
-    // ==================================================
+// ==================================================
+// SISWA
+// ==================================================
 
-    document.getElementById("welcomeName").textContent =
-      student.nama || "Siswa";
+document.getElementById("welcomeName").textContent =
+  student.nama || "Siswa";
 
-    document.getElementById("welcomeClass").textContent =
-      student.kelas || "";
+document.getElementById("welcomeClass").textContent =
+  student.kelas || "";
 
+progress = student.progress || [];
 
-    progress =
-      student.progress || [];
+await loadLesson1FromFirebase();
 
+renderLessons();
 
-    renderLessons();
-
-    show("homePage");
-
+show("homePage");
   }
 
   catch (error) {
@@ -694,6 +809,161 @@ document.getElementById("cancelStudentBtn").addEventListener("click", function()
   document.getElementById("addStudentForm").classList.add("hidden");
 });
 
+// TAMBAH MATERI - BUKA FORM
+
+document.getElementById("addMaterialBtn").addEventListener("click", function() {
+
+  document.getElementById("addMaterialForm").classList.remove("hidden");
+
+});
+
+// EDIT MATERI
+
+document.addEventListener("click", async function(event) {
+
+  if (event.target.classList.contains("edit-material-btn")) {
+
+    const materialId =
+      event.target.dataset.id;
+
+      currentEditingMaterialId = materialId;
+    try {
+
+      const materialDoc =
+        await getDoc(doc(db, "materials", materialId));
+
+      if (!materialDoc.exists()) {
+        alert("Materi ora ditemokake.");
+        return;
+      }
+
+      const data = materialDoc.data();
+
+      document.getElementById("editMaterialTitle").value =
+        data.title || "";
+
+      document.getElementById("editMaterialDescription").value =
+        data.description || "";
+
+      document.getElementById("editMaterialContent").value =
+        data.content || "";
+
+      document
+        .getElementById("editMaterialForm")
+        .classList.remove("hidden");
+
+    } catch (error) {
+
+      console.error("Gagal membuka materi:", error);
+
+      alert("Materi gagal dibuka.");
+
+    }
+
+  }
+
+});
+// SIMPAN PERUBAHAN MATERI
+
+document
+  .getElementById("editMaterialFormElement")
+  .addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const title =
+      document.getElementById("editMaterialTitle").value.trim();
+
+    const description =
+      document.getElementById("editMaterialDescription").value.trim();
+
+    const content =
+      document.getElementById("editMaterialContent").value.trim();
+
+    if (!title || !description || !content) {
+      alert("Kabeh data materi kudu diisi.");
+      return;
+    }
+
+    try {
+
+      await setDoc(
+        doc(db, "materials", currentEditingMaterialId),
+        {
+          title: title,
+          description: description,
+          content: content
+        },
+        { merge: true }
+      );
+
+      alert("Materi berhasil diperbarui!");
+
+      document
+        .getElementById("editMaterialForm")
+        .classList.add("hidden");
+
+      await loadMaterials();
+
+    } catch (error) {
+
+      console.error(
+        "Gagal memperbarui materi:",
+        error
+      );
+
+      alert("Materi gagal diperbarui.");
+
+    }
+
+});
+
+// TAMBAH MATERI - BATAL
+
+document.getElementById("cancelMaterialBtn").addEventListener("click", function() {
+
+  document.getElementById("addMaterialForm").classList.add("hidden");
+
+});
+// SIMPAN MATERI
+
+document.getElementById("materialForm").addEventListener("submit", async function(event) {
+
+  event.preventDefault();
+
+  const title = document.getElementById("materialTitle").value.trim();
+  const description = document.getElementById("materialDescription").value.trim();
+  const content = document.getElementById("materialContent").value.trim();
+
+  if (!title || !description) {
+    alert("Judul lan deskripsi kudu diisi.");
+    return;
+  }
+
+  try {
+
+    await setDoc(doc(collection(db, "materials")), {
+    title: title,
+    description: description,
+   content: content,
+    createdAt: new Date().toISOString()
+    });
+
+    alert("Materi berhasil disimpan!");
+
+    document.getElementById("materialForm").reset();
+    document.getElementById("addMaterialForm").classList.add("hidden");
+
+    loadMaterials();
+
+  } catch (error) {
+
+    console.error("Gagal menyimpan materi:", error);
+    alert("Materi gagal disimpan.");
+
+  }
+
+});
 document.getElementById("studentForm").addEventListener("submit", async function(event) {
   event.preventDefault();
 
