@@ -133,8 +133,12 @@ async function loadLesson1FromFirebase() {
 
     lessons[0].description =
       data.description || lessons[0].description;
+
     lessons[0].material =
       data.content || lessons[0].material;  
+
+      console.log("ISI FIREBASE:", data.content);
+console.log("ISI MATERIAL:", lessons[0].material);
 
     console.log("Materi 1 dari Firebase:", data);
 
