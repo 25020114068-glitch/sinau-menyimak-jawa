@@ -784,16 +784,57 @@ document
 
 
 // ==================================================
-// TOMBOL QUIZIZZ
+// BUKA BLAST ROOM
 // ==================================================
 
 document
-  .getElementById("quizizzBtn")
-  .addEventListener("click", function() {
+  .getElementById("blastBtn")
+  .addEventListener("click", async function() {
 
-    alert(
-      "Link Quizizz durung dipasang."
-    );
+    try {
+
+      const materialsSnapshot =
+        await getDocs(
+          collection(db, "materials")
+        );
+
+      if (materialsSnapshot.empty) {
+
+        alert("Blast Room durung dipasang.");
+        return;
+
+      }
+
+      const data =
+        materialsSnapshot.docs[0].data();
+
+      const blastUrl =
+        data.blastUrl || "";
+
+      if (!blastUrl) {
+
+        alert("Blast Room durung dipasang.");
+        return;
+
+      }
+
+      window.open(
+        blastUrl,
+        "_blank"
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Gagal membuka Blast Room:",
+        error
+      );
+
+      alert(
+        "Blast Room gagal dibuka."
+      );
+
+    }
 
   });
 
@@ -1181,6 +1222,60 @@ document
       );
 
       alert("Video gagal disimpan.");
+
+    }
+
+  });
+  // SIMPAN BLAST ROOM
+
+document
+  .getElementById("blastForm")
+  .addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const blastUrl =
+      document.getElementById("blastUrl").value.trim();
+
+    if (!blastUrl) {
+      alert("Link Blast Room kudu diisi.");
+      return;
+    }
+
+    try {
+
+      const materialsSnapshot = await getDocs(
+        collection(db, "materials")
+      );
+
+      if (materialsSnapshot.empty) {
+        alert("Materi durung ana.");
+        return;
+      }
+
+      const materialId =
+        materialsSnapshot.docs[0].id;
+
+      await setDoc(
+        doc(db, "materials", materialId),
+        {
+          blastUrl: blastUrl
+        },
+        {
+          merge: true
+        }
+      );
+
+      alert("Blast Room berhasil disimpan!");
+
+    } catch (error) {
+
+      console.error(
+        "Gagal menyimpan Blast Room:",
+        error
+      );
+
+      alert("Blast Room gagal disimpan.");
 
     }
 
