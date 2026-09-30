@@ -818,10 +818,7 @@ document
 
       }
 
-      window.open(
-        blastUrl,
-        "_blank"
-      );
+      window.location.href = blastUrl;
 
     } catch (error) {
 
