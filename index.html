@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sinau Menyimak Basa Jawa</title>
+  <title>Sinau Nyemak Basa Jawa</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,9 +12,11 @@
     <!-- LOGIN -->
     <section id="loginPage" class="page login-page">
       <div class="login-card">
-        <div class="logo">ꦱꦶ</div>
-        <p class="eyebrow">PEMBELAJARAN BAHASA JAWA</p>
-        <h1>Sinau Menyimak<br>Basa Jawa</h1>
+        <div class="logo">
+  <img src="gunungan.png.png" alt="Gunungan Wayang">
+</div>
+        <p class="eyebrow">PASINAON BAHASA JAWA</p>
+        <h1>Sinau Nyemak<br>Basa Jawa</h1>
         <p class="subtitle">Kelas XI · Fase F · Semester 1</p>
 
         <form id="loginForm">
@@ -44,7 +46,10 @@
     <!-- HOME -->
     <section id="homePage" class="page hidden">
       <header class="topbar">
-        <div class="brand">ꦱꦶ <span>Sinau Menyimak</span></div>
+        <div class="brand">
+  <img src="gunungan.png.png" alt="Gunungan Wayang">
+  <span>Sinau Nyemak</span>
+</div>
         <button id="logoutBtn" class="logout">Metu</button>
       </header>
 
@@ -69,7 +74,7 @@
         </div>
 
         <div class="section-title">
-          <p class="eyebrow">PEMBELAJARAN</p>
+          <p class="eyebrow">PASINAON</p>
           <h2>Semester 1</h2>
           <p>Pilih materi kanthi urut. Materi sabanjure bakal kabuka sawise tahap sadurunge rampung.</p>
         </div>
@@ -80,7 +85,10 @@
 <!-- TEACHER DASHBOARD -->
 <section id="teacherPage" class="page hidden">
   <header class="topbar">
-    <div class="brand">ꦱꦶ <span>Dashboard Guru</span></div>
+   <div class="brand">
+  <img src="gunungan.png.png" alt="Gunungan Wayang">
+  <span>Dashboard Guru</span>
+</div>
     <button id="teacherLogoutBtn" class="logout">Metu</button>
   </header>
 
@@ -90,12 +98,12 @@
       <div>
         <p class="eyebrow">DASHBOARD GURU</p>
         <h2 id="teacherName">Guru</h2>
-        <p>Kelola siswa lan pantau progres pembelajaran.</p>
+        <p>Kelola siswa lan pantau progres pasinaon.</p>
       </div>
     </div>
 
     <div class="section-title">
-      <p class="eyebrow">DATA PEMBELAJAR</p>
+      <p class="eyebrow">DARA PASINAON</p>
       <h2>Daftar Siswa</h2>
       <p>Data siswa sing wis didaftarkan ing sistem.</p>
     </div>
@@ -175,7 +183,7 @@
 <!-- PILIH MATERI -->
 <div id="teacherMaterialSelector" class="content-card">
 
-  <p class="eyebrow">PEMBELAJARAN</p>
+  <p class="eyebrow">PASINAON</p>
   <h2>Pilih Materi</h2>
   <p>Pilih materi sing arep dikelola.</p>
 
@@ -199,12 +207,12 @@
 <!-- PENGATURAN ALUR MATERI -->
 <div id="materialFlowForm" class="content-card">
 
-  <p class="eyebrow">ALUR PEMBELAJARAN</p>
+  <p class="eyebrow">ALUR PASINAON</p>
 
   <h2>Pengaturan Alur Materi 1</h2>
 
   <p>
-    Pilih tahap pembelajaran yang akan ditampilkan kepada siswa.
+    Pilih tahap pasinaon sing bakal ditampilake marang siswa.
   </p>
 
   <label class="check-row">
@@ -213,7 +221,7 @@
       id="enableMaterial"
       checked
     >
-    <span>Materi Pembelajaran</span>
+    <span>Materi Pasinaon</span>
   </label>
 
   <label class="check-row">
@@ -248,9 +256,9 @@
 <!-- MANAJEMEN MATERI -->
 <div class="content-card" style="margin-top:40px;">
 
-  <p class="eyebrow">PEMBELAJARAN</p>
+  <p class="eyebrow">PASINAON</p>
 
-  <h2>Materi Pembelajaran</h2>
+  <h2>Materi Pasinaon</h2>
 
   <p>Kelola materi sing dipelajari siswa.</p>
 
@@ -271,7 +279,7 @@
     <div>
       <h3 style="margin:0;">Daftar Materi</h3>
       <p style="margin:6px 0 0;">
-        Materi pembelajaran siswa.
+        Materi pasinaon siswa.
       </p>
 
     </div>
@@ -287,7 +295,7 @@
 <!-- FORM EDIT MATERI -->
 <div id="editMaterialForm" class="content-card hidden">
 
-  <p class="eyebrow">PEMBELAJARAN</p>
+  <p class="eyebrow">PASINAON</p>
   <h2>Edit Materi</h2>
 
   <form id="editMaterialFormElement">
@@ -307,11 +315,19 @@
     ></textarea>
 
     <label for="editMaterialContent">Isi Materi</label>
-    <textarea
-      id="editMaterialContent"
-      rows="12"
-      required
-    ></textarea>
+
+<div class="editor-toolbar">
+  <button type="button" data-format="bold"><b>B</b></button>
+  <button type="button" data-format="italic"><i>I</i></button>
+  <button type="button" data-format="heading">H</button>
+  <button type="button" data-format="bullet">• List</button>
+</div>
+
+<textarea 
+  id="editMaterialContent" 
+  rows="12" 
+  required
+></textarea>
 
 <label for="editMaterialStageTitle">Judul Tahap 1</label>
 <input
@@ -360,7 +376,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
 
     <div>
-      <p class="eyebrow">VIDEO PEMBELAJARAN</p>
+      <p class="eyebrow">VIDEO PASINAON</p>
       <h2>Video Materi 1</h2>
       <p>Kelola video yang bakal ditonton siswa.</p>
     </div>
@@ -376,7 +392,7 @@
 
   <div id="videoMaterialForm" class="hidden">
 
-  <p class="eyebrow">VIDEO PEMBELAJARAN</p>
+  <p class="eyebrow">VIDEO PASINAON</p>
   <h2>Video Materi 1</h2>
 
   <p>
@@ -491,7 +507,7 @@
     <section id="lessonPage" class="page hidden">
       <header class="topbar">
         <button id="backBtn" class="back">← Beranda</button>
-        <div class="brand">Sinau Menyimak</div>
+        <div class="brand">Sinau Nyemak</div>
         <button id="logoutBtn2" class="logout">Metu</button>
       </header>
 
@@ -545,11 +561,11 @@
         <article id="videoStep" class="content-card hidden">
           <h2 id="videoTitleDisplay">🎬 Video Simakan</h2>
 <p id="videoDescriptionDisplay">
-  Simak video kanthi premati. Ing versi sabanjure, video bisa diganti nganggo video pembelajaranmu dhewe.
+  Simak video kanthi premati. Ing versi sabanjure, video bisa diganti nganggo video pasinaonmu dhewe.
 </p>
           <div id="videoContainer" class="video-placeholder">
 
-  <p>Video pembelajaran durung dipasang.</p>
+  <p>Video pasinaon durung dipasang.</p>
 
 </div>
 

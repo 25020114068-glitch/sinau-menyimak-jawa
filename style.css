@@ -8,9 +8,9 @@
   --text: #20241f;
   --muted: #70766e;
   --line: #e1e4dc;
-  --primary: #496b4d;
-  --primary-dark: #35533a;
-  --soft: #e9f0e8;
+  --primary: #1e3a5f;
+  --primary-dark: #142a44;
+  --soft: #e8eef5;
   --gold: #c49a52;
   --danger: #9c4d4d;
 }
@@ -59,15 +59,21 @@ button {
 }
 
 .logo {
-  width: 54px;
-  height: 54px;
+  width: 72px;
+  height: 72px;
   display: grid;
   place-items: center;
-  border-radius: 16px;
-  background: var(--primary);
-  color: white;
-  font-size: 30px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 2px solid var(--primary);
   margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.logo img {
+  width: 92%;
+  height: 92%;
+  object-fit: contain;
 }
 
 .eyebrow {
@@ -169,6 +175,12 @@ input:focus, select:focus {
   gap: 10px;
   align-items: center;
   font-weight: 900;
+}
+
+.brand img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 .brand span {
@@ -533,4 +545,34 @@ input:focus, select:focus {
   .video-placeholder {
     min-height: 230px;
   }
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.editor-toolbar button {
+  min-width: 40px;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.editor-toolbar button:hover {
+  background: var(--soft);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.editor-toolbar button:active {
+  background: var(--primary);
+  color: #ffffff;
 }

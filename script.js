@@ -22,7 +22,7 @@ import {
 const lessons = [
   {
     id: 1,
-    title: "Menyimak Drama Jawa Modern",
+    title: "Nyemak Drama Jawa Modern",
     description:
       "Mangerteni drama Jawa modern lan bab-bab sing kudu digatekake nalika nyimak.",
 
@@ -35,7 +35,7 @@ const lessons = [
         Crita diwujudake lumantar dialog, tumindak, lan interaksi antarparaga.
       </p>
 
-      <h3>Tujuan Menyimak</h3>
+      <h3>Tujuan Nyemak</h3>
 
       <p>
         Sawise nyimak drama, siswa diajab bisa mangerteni isi crita,
@@ -521,7 +521,7 @@ document
           data.content || "";
 
         document.getElementById("editMaterialStageTitle").value =
-          data.materialStageTitle || "📖 Materi Pembelajaran";
+          data.materialStageTitle || "📖 Materi Pasinaon";
 
         document.getElementById("editMaterialNote").value =
           data.materialNote ||
@@ -706,7 +706,7 @@ currentLesson.enableBlast =
 
 currentLesson.videoDescription =
   data.videoDescription ||
-  "Simak video kanthi premati. Ing versi sabanjure, video bisa diganti nganggo video pembelajaranmu dhewe.";
+  "Simak video kanthi premati. Ing versi sabanjure, video bisa diganti nganggo video pasinaonmu dhewe.";
 
 currentLesson.videoCheckText =
   data.videoCheckText ||
@@ -717,7 +717,7 @@ currentLesson.videoButtonText =
   "Sabanjure: Blast Room →";
 
 currentLesson.materialStageTitle =
-  data.materialStageTitle || "📖 Materi Pembelajaran";
+  data.materialStageTitle || "📖 Materi Pasinaon";
 
 currentLesson.materialNote =
   data.materialNote || "Wacanen materi kanthi teliti sadurunge nerusake menyang video simakan.";
@@ -986,7 +986,7 @@ function renderVideo() {
           width="100%"
           height="400"
           src="https://www.youtube.com/embed/${videoId}"
-          title="Video Pembelajaran"
+          title="Video Pasinaon"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowfullscreen>
@@ -1003,7 +1003,7 @@ function renderVideo() {
   } else {
 
     videoContainer.innerHTML =
-      "<p>Video pembelajaran durung dipasang.</p>";
+      "<p>Video pasinaon durung dipasang.</p>";
 
   }
 
@@ -1480,7 +1480,7 @@ document.addEventListener("click", async function(event) {
         data.content || "";
 
 document.getElementById("editMaterialStageTitle").value =
-  data.materialStageTitle || "📖 Materi Pembelajaran";
+  data.materialStageTitle || "📖 Materi Pasinaon";
 
 document.getElementById("editMaterialNote").value =
   data.materialNote || "Wacanen materi kanthi teliti sadurunge nerusake menyang video simakan.";
@@ -1856,5 +1856,61 @@ if (!materialId) {
       alert("Blast Room gagal disimpan.");
 
     }
+
+  });
+
+  document
+  .querySelectorAll(".editor-toolbar button")
+  .forEach(button => {
+
+    button.addEventListener("click", function() {
+
+      const textarea =
+        document.getElementById("editMaterialContent");
+
+      const format =
+        button.dataset.format;
+
+      const start =
+        textarea.selectionStart;
+
+      const end =
+        textarea.selectionEnd;
+
+      const selectedText =
+        textarea.value.substring(start, end);
+
+      if (!selectedText) {
+        alert("Blok teks sing arep diformat dhisik.");
+        return;
+      }
+
+      let formattedText = selectedText;
+
+      if (format === "bold") {
+        formattedText = `**${selectedText}**`;
+      }
+
+      if (format === "italic") {
+        formattedText = `*${selectedText}*`;
+      }
+
+      if (format === "heading") {
+        formattedText = `### ${selectedText}`;
+      }
+
+      if (format === "bullet") {
+        formattedText = `- ${selectedText}`;
+      }
+
+      textarea.setRangeText(
+        formattedText,
+        start,
+        end,
+        "select"
+      );
+
+      textarea.focus();
+    });
 
   });
