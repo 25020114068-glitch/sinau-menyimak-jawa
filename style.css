@@ -335,7 +335,7 @@ input:focus, select:focus {
 }
 
 .lesson-header {
-  margin: 35px 0;
+  margin: 0;
 }
 
 .lesson-number {
@@ -361,7 +361,7 @@ input:focus, select:focus {
 .stepper {
   display: flex;
   align-items: center;
-  margin-bottom: 22px;
+  margin-bottom: 0px;
 }
 
 .step {

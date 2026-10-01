@@ -89,6 +89,10 @@ let student = null;
 
 let currentEditingMaterialId = null;
 
+let currentEditingEditButton = null;
+
+let currentEditingVideoButton = null;
+
 
 // ==================================================
 // FUNGSI PINDAH HALAMAN
@@ -115,17 +119,19 @@ async function loadLesson1FromFirebase() {
 
   try {
 
-    const materialsSnapshot = await getDocs(
-      collection(db, "materials")
-    );
+   const materialRef = doc(
+  db,
+  "materials",
+  "MuBW6LqTMRuTUraGuEtd"
+);
 
-    if (materialsSnapshot.empty) {
-      return;
-    }
+const materialSnapshot = await getDoc(materialRef);
 
-    // Ambil materi pertama
-    const firstMaterial = materialsSnapshot.docs[0];
-    const data = firstMaterial.data();
+if (!materialSnapshot.exists()) {
+  return;
+}
+
+const data = materialSnapshot.data();
 
     // Masukkan data Firebase ke Materi 1
     lessons[0].title =
@@ -333,50 +339,76 @@ async function loadMaterials() {
   const materialList =
     document.getElementById("materialList");
 
+  if (!materialList) return;
+
+  const materialIds = {
+    1: "MuBW6LqTMRuTUraGuEtd",
+    2: "QXquAe93GYRxanmUAiiJ",
+    3: "vIIhHsM7W05EktJyLEDT",
+    4: "WwbP11SpZDGRg3UvQSMc"
+  };
+
   try {
 
-    const materialsSnapshot =
-      await getDocs(
-        collection(db, "materials")
-      );
+    let daftarMateri = [];
 
-    if (materialsSnapshot.empty) {
+    for (let i = 1; i <= 4; i++) {
 
-      materialList.innerHTML =
-        "<p>Durung ana materi.</p>";
+      const materialRef =
+        doc(db, "materials", materialIds[i]);
 
-      return;
+      const materialSnapshot =
+        await getDoc(materialRef);
+
+      if (materialSnapshot.exists()) {
+
+        daftarMateri.push({
+          id: materialIds[i],
+          nomor: i,
+          data: materialSnapshot.data()
+        });
+
+      } else {
+
+        daftarMateri.push({
+          id: materialIds[i],
+          nomor: i,
+          data: {
+            title: "",
+            description: ""
+          }
+        });
+
+      }
     }
 
-    let nomor = 1;
-
     materialList.innerHTML =
-      materialsSnapshot.docs.map(docSnapshot => {
+      daftarMateri.map(material => {
 
-        const data = docSnapshot.data();
+        const data = material.data;
 
         return `
-  <div class="student-row">
+          <div class="student-row">
 
-    <div>
-      <strong>
-        Materi ${nomor++}: ${data.title || "-"}
-      </strong>
+            <div>
+              <strong>
+                Materi ${material.nomor}: ${data.title || "-"}
+              </strong>
 
-      <p>
-        ${data.description || "-"}
-      </p>
-    </div>
+              <p>
+                ${data.description || "-"}
+              </p>
+            </div>
 
-    <button
-      class="btn secondary edit-material-btn"
-      data-id="${docSnapshot.id}"
-    >
-      Edit
-    </button>
+            <button
+              class="btn secondary edit-material-btn"
+              data-id="${material.id}"
+            >
+              Edit
+            </button>
 
-  </div>
-`;
+          </div>
+        `;
 
       }).join("");
 
@@ -391,6 +423,224 @@ async function loadMaterials() {
       "<p>Gagal mengambil data materi.</p>";
   }
 }
+
+function renderTeacherMaterialChoices() {
+
+  const container =
+    document.getElementById("teacherMaterialChoices");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+document
+  .getElementById("teacherMaterialEditor")
+  .classList.add("hidden");
+
+  const materialIds = {
+  1: "MuBW6LqTMRuTUraGuEtd",
+  2: "QXquAe93GYRxanmUAiiJ",
+  3: "vIIhHsM7W05EktJyLEDT",
+  4: "WwbP11SpZDGRg3UvQSMc"
+};
+
+  for (let i = 1; i <= 4; i++) {
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+    button.className = "btn secondary";
+    button.style.marginRight = "10px";
+    button.style.marginBottom = "10px";
+
+    button.textContent = `Materi ${i}`;
+
+    button.addEventListener("click", async () => {
+
+      const materialId =
+        materialIds[i];
+
+      try {
+
+        const materialRef =
+          doc(db, "materials", materialId);
+
+        const materialSnapshot =
+          await getDoc(materialRef);
+
+        // Kalau Materi 2–4 belum ada, buat dokumen kosong
+        if (!materialSnapshot.exists()) {
+
+          await setDoc(
+            materialRef,
+            {
+              materialNumber: i,
+              title: "",
+              description: "",
+              content: "",
+              enableMaterial: true,
+              enableVideo: true,
+              enableBlast: true
+            }
+          );
+
+          console.log(
+            `Dokumen Materi ${i} berhasil dibuat.`
+          );
+
+        }
+
+        // Simpan materi yang sedang dipilih
+        currentEditingMaterialId =
+          materialId;
+
+        // Ambil data terbaru
+        const latestSnapshot =
+          await getDoc(materialRef);
+
+        const data =
+          latestSnapshot.data() || {};
+
+        console.log(
+          "Materi yang dipilih:",
+          i,
+          data
+        );
+
+        // ==========================
+        // DATA MATERI
+        // ==========================
+
+        document.getElementById("editMaterialTitle").value =
+          data.title || "";
+
+        document.getElementById("editMaterialDescription").value =
+          data.description || "";
+
+        document.getElementById("editMaterialContent").value =
+          data.content || "";
+
+        document.getElementById("editMaterialStageTitle").value =
+          data.materialStageTitle || "📖 Materi Pembelajaran";
+
+        document.getElementById("editMaterialNote").value =
+          data.materialNote ||
+          "Wacanen materi kanthi teliti sadurunge nerusake menyang video simakan.";
+
+        document.getElementById("editMaterialButtonText").value =
+          data.materialButtonText ||
+          "Sabanjure: Video Simakan →";
+
+        // ==========================
+        // VIDEO
+        // ==========================
+
+        document.getElementById("videoUrl").value =
+          data.videoUrl || "";
+
+        document.getElementById("editVideoTitle").value =
+          data.videoTitle || "🎬 Video Simakan";
+
+        document.getElementById("editVideoDescription").value =
+          data.videoDescription ||
+          "Simak video kanthi premati.";
+
+        document.getElementById("editVideoCheckText").value =
+          data.videoCheckText ||
+          "Aku wis nyimak video kanthi premati.";
+
+        document.getElementById("editVideoButtonText").value =
+          data.videoButtonText ||
+          "Sabanjure: Blast Room →";
+
+        // ==========================
+        // BLAST ROOM
+        // ==========================
+
+        document.getElementById("blastUrl").value =
+          data.blastUrl || "";
+
+        // ==========================
+        // ALUR
+        // ==========================
+
+        document.getElementById("enableMaterial").checked =
+          data.enableMaterial !== false;
+
+        document.getElementById("enableVideo").checked =
+          data.enableVideo !== false;
+
+        document.getElementById("enableBlast").checked =
+          data.enableBlast !== false;
+
+// ==========================
+// TAMPILKAN EDITOR
+// ==========================
+
+document
+  .getElementById("teacherMaterialEditor")
+  .classList.remove("hidden");
+
+document
+  .getElementById("teacherMaterialSelector")
+  .classList.add("hidden");
+
+// Sembunyikan daftar materi lama
+const materialList =
+  document.getElementById("materialList");
+
+if (materialList) {
+
+  materialList.classList.add("hidden");
+
+  const materialCard =
+    materialList.closest(".content-card");
+
+  if (materialCard) {
+    materialCard.classList.add("hidden");
+  }
+}
+
+const backButton =
+  document.getElementById("backToMaterialSelector");
+
+if (backButton) {
+  backButton.classList.remove("hidden");
+}
+
+      } catch (error) {
+
+        console.error(
+          `Gagal membuka Materi ${i}:`,
+          error
+        );
+
+        alert(
+          `Materi ${i} gagal dibuka.`
+        );
+
+      }
+
+    });
+
+    container.appendChild(button);
+  }
+}
+
+document
+  .getElementById("backToMaterialSelector")
+  .addEventListener("click", () => {
+
+    document
+      .getElementById("teacherMaterialEditor")
+      .classList.add("hidden");
+
+    document
+      .getElementById("teacherMaterialSelector")
+      .classList.remove("hidden");
+
+  });
+
 function markdownToHtml(text) {
 
   return text
@@ -411,14 +661,26 @@ async function openLesson(id) {
   // Ambil materi terbaru langsung dari Firebase
   try {
 
-    const materialsSnapshot = await getDocs(
-      collection(db, "materials")
-    );
+   const materialIds = {
+  1: "MuBW6LqTMRuTUraGuEtd",
+  2: "QXquAe93GYRxanmUAiiJ",
+  3: "vIIhHsM7W05EktJyLEDT",
+  4: "WwbP11SpZDGRg3UvQSMc"
+};
 
-    if (!materialsSnapshot.empty && id === 1) {
+const materialRef = doc(
+  db,
+  "materials",
+  materialIds[id]
+);
 
-      const data =
-        materialsSnapshot.docs[0].data();
+const materialSnapshot =
+  await getDoc(materialRef);
+
+if (materialSnapshot.exists()) {
+
+  const data =
+    materialSnapshot.data();
 
       currentLesson.title =
         data.title || currentLesson.title;
@@ -431,6 +693,37 @@ async function openLesson(id) {
 
         currentLesson.videoUrl =
   data.videoUrl || "";
+  currentLesson.enableMaterial =
+  data.enableMaterial !== false;
+
+currentLesson.enableVideo =
+  data.enableVideo !== false;
+
+currentLesson.enableBlast =
+  data.enableBlast !== false;
+  currentLesson.videoTitle =
+  data.videoTitle || "🎬 Video Simakan";
+
+currentLesson.videoDescription =
+  data.videoDescription ||
+  "Simak video kanthi premati. Ing versi sabanjure, video bisa diganti nganggo video pembelajaranmu dhewe.";
+
+currentLesson.videoCheckText =
+  data.videoCheckText ||
+  "Aku wis nyimak video kanthi premati.";
+
+currentLesson.videoButtonText =
+  data.videoButtonText ||
+  "Sabanjure: Blast Room →";
+
+currentLesson.materialStageTitle =
+  data.materialStageTitle || "📖 Materi Pembelajaran";
+
+currentLesson.materialNote =
+  data.materialNote || "Wacanen materi kanthi teliti sadurunge nerusake menyang video simakan.";
+
+currentLesson.materialButtonText =
+  data.materialButtonText || "Sabanjure: Video Simakan →";
 
   console.log("VIDEO DARI FIREBASE:", data.videoUrl);
 
@@ -457,37 +750,151 @@ async function openLesson(id) {
   document.getElementById("materialText").innerHTML =
     markdownToHtml(currentLesson.material);
 
+document.getElementById("materialTitleDisplay").textContent =
+  currentLesson.materialStageTitle;
+
+document.getElementById("materialNote").textContent =
+  currentLesson.materialNote;
+
+document.getElementById("materialButtonText").textContent =
+  currentLesson.materialButtonText;
+document.getElementById("videoTitleDisplay").textContent =
+  currentLesson.videoTitle;
+
+document.getElementById("videoDescriptionDisplay").textContent =
+  currentLesson.videoDescription;
+
+document.getElementById("videoCheckText").textContent =
+  currentLesson.videoCheckText;
+
+document.getElementById("videoButtonText").textContent =
+  currentLesson.videoButtonText;
+  document
+  .getElementById("materialStep")
+  .classList.add("hidden");
+
+document
+  .getElementById("videoStep")
+  .classList.add("hidden");
+
+document
+  .getElementById("quizStep")
+  .classList.add("hidden");
+
+document.getElementById("watchedCheck").checked = false;
+document.getElementById("toQuizBtn").disabled = true;
+
+
+// TENTUKAN TAHAP PERTAMA
+
+if (currentLesson.enableMaterial) {
+
   document
     .getElementById("materialStep")
     .classList.remove("hidden");
 
+  setSteps(getStepNumber("material"));
+
+} else if (currentLesson.enableVideo) {
+
   document
     .getElementById("videoStep")
-    .classList.add("hidden");
+    .classList.remove("hidden");
+
+  renderVideo();
+
+  setSteps(getStepNumber("video"));
+
+} else if (currentLesson.enableBlast) {
 
   document
     .getElementById("quizStep")
-    .classList.add("hidden");
+    .classList.remove("hidden");
 
-  document.getElementById("watchedCheck").checked = false;
+  setSteps(getStepNumber("blast"));
 
-  document.getElementById("toQuizBtn").disabled = true;
-
-  setSteps(1);
+}
 
   show("lessonPage");
 }
 
 // ==================================================
-// STEP MATERI / VIDEO / QUIZ
+// STEP MATERI / VIDEO / BLAST ROOM
 // ==================================================
+function getStepNumber(type) {
 
+  const activeSteps = [];
+
+  if (currentLesson.enableMaterial) {
+    activeSteps.push("material");
+  }
+
+  if (currentLesson.enableVideo) {
+    activeSteps.push("video");
+  }
+
+  if (currentLesson.enableBlast) {
+    activeSteps.push("blast");
+  }
+
+  return activeSteps.indexOf(type) + 1;
+}
 function setSteps(active) {
 
-  [1, 2, 3].forEach(number => {
+  const activeSteps = [];
 
-    const step =
-      document.getElementById(`step${number}`);
+  if (currentLesson.enableMaterial) {
+    activeSteps.push("material");
+  }
+
+  if (currentLesson.enableVideo) {
+    activeSteps.push("video");
+  }
+
+  if (currentLesson.enableBlast) {
+    activeSteps.push("blast");
+  }
+
+  const steps =
+    document.querySelectorAll(".stepper .step");
+
+  const lines =
+    document.querySelectorAll(".stepper .line");
+
+
+  // ATUR STEP
+
+  activeSteps.forEach((type, index) => {
+
+    const number = index + 1;
+
+    const step = steps[index];
+
+    if (!step) return;
+
+    step.classList.remove("hidden");
+
+    step.querySelector("span").textContent =
+      number;
+
+    const label =
+      step.querySelector(".step-label");
+
+    if (label) {
+
+      if (type === "material") {
+        label.textContent = "Materi";
+      }
+
+      if (type === "video") {
+        label.textContent = "Simakan";
+      }
+
+      if (type === "blast") {
+        label.textContent = "Blast Room";
+      }
+
+    }
 
     step.classList.toggle(
       "active",
@@ -501,9 +908,106 @@ function setSteps(active) {
 
   });
 
+
+  // SEMBUNYIKAN STEP YANG TIDAK AKTIF
+
+  for (
+    let i = activeSteps.length;
+    i < steps.length;
+    i++
+  ) {
+
+    steps[i].classList.add("hidden");
+
+  }
+
+
+  // ATUR GARIS
+
+  lines.forEach((line, index) => {
+
+    if (index < activeSteps.length - 1) {
+
+      line.classList.remove("hidden");
+
+    } else {
+
+      line.classList.add("hidden");
+
+    }
+
+  });
+
 }
+function renderVideo() {
 
+  const videoContainer =
+    document.getElementById("videoContainer");
 
+  if (
+    currentLesson &&
+    currentLesson.videoUrl
+  ) {
+
+    let videoId = "";
+
+    try {
+
+      const url =
+        new URL(currentLesson.videoUrl);
+
+      if (url.hostname.includes("youtu.be")) {
+
+        videoId =
+          url.pathname.substring(1);
+
+      } else {
+
+        videoId =
+          url.searchParams.get("v");
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Link YouTube tidak valid:",
+        error
+      );
+
+    }
+
+    console.log("VIDEO ID:", videoId);
+
+    if (videoId) {
+
+      videoContainer.innerHTML = `
+        <iframe
+          width="100%"
+          height="400"
+          src="https://www.youtube.com/embed/${videoId}"
+          title="Video Pembelajaran"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      `;
+
+    } else {
+
+      videoContainer.innerHTML =
+        "<p>Link video YouTube ora valid.</p>";
+
+    }
+
+  } else {
+
+    videoContainer.innerHTML =
+      "<p>Video pembelajaran durung dipasang.</p>";
+
+  }
+
+}
 // ==================================================
 // LOGIN FIREBASE
 // ==================================================
@@ -616,18 +1120,18 @@ onAuthStateChanged(auth, async user => {
     // CEK ROLE
     // ==================================================
 
-   if (student.role === "teacher") {
+if (student.role === "teacher") {
 
   document.getElementById("teacherName").textContent =
     student.nama || "Guru";
 
   await loadStudents();
   await loadMaterials();
+  renderTeacherMaterialChoices();
 
   show("teacherPage");
 
   return;
-
 }
 // ==================================================
 // SISWA
@@ -662,7 +1166,7 @@ show("homePage");
 
 
 // ==================================================
-// MATERI → VIDEO
+// MATERI → TAHAP BERIKUTNYA
 // ==================================================
 
 document
@@ -673,77 +1177,41 @@ document
       .getElementById("materialStep")
       .classList.add("hidden");
 
-    document
-      .getElementById("videoStep")
-      .classList.remove("hidden");
 
-    const videoContainer =
-      document.getElementById("videoContainer");
+    // Kalau Video aktif → buka Video
 
-    if (
-      currentLesson &&
-      currentLesson.videoUrl
-    ) {
+if (currentLesson.enableVideo) {
 
-      let videoId = "";
+  document
+    .getElementById("videoStep")
+    .classList.remove("hidden");
 
-      try {
+  renderVideo();
 
-        const url =
-          new URL(currentLesson.videoUrl);
+  setSteps(getStepNumber("video"));
 
-        if (url.hostname.includes("youtu.be")) {
+  return;
+}
 
-          videoId =
-            url.pathname.substring(1);
+    // Kalau Video mati tapi Blast aktif → langsung Blast
 
-        } else {
+    if (currentLesson.enableBlast) {
 
-          videoId =
-            url.searchParams.get("v");
+      document
+        .getElementById("quizStep")
+        .classList.remove("hidden");
 
-        }
+      setSteps(getStepNumber("blast"));
 
-      } catch (error) {
-
-        console.error(
-          "Link YouTube tidak valid:",
-          error
-        );
-
-      }
-
-console.log("VIDEO ID:", videoId);
-
-      if (videoId) {
-        
-videoContainer.innerHTML = `
-  <iframe
-    width="100%"
-    height="400"
-    src="https://www.youtube.com/embed/${videoId}"
-    title="Video Pembelajaran"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen>
-  </iframe>
-`;
-
-      } else {
-
-        videoContainer.innerHTML =
-          "<p>Link video YouTube ora valid.</p>";
-
-      }
-
-    } else {
-
-      videoContainer.innerHTML =
-        "<p>Video pembelajaran durung dipasang.</p>";
-
+      return;
     }
 
-    setSteps(2);
+
+    // Kalau Video dan Blast mati → selesai
+
+    renderLessons();
+
+    show("homePage");
 
   });
 
@@ -763,7 +1231,7 @@ document
 
 
 // ==================================================
-// VIDEO → QUIZIZZ
+// VIDEO → TAHAP BERIKUTNYA
 // ==================================================
 
 document
@@ -774,11 +1242,26 @@ document
       .getElementById("videoStep")
       .classList.add("hidden");
 
-    document
-      .getElementById("quizStep")
-      .classList.remove("hidden");
 
-    setSteps(3);
+    // Kalau Blast aktif → buka Blast Room
+
+    if (currentLesson.enableBlast) {
+
+      document
+        .getElementById("quizStep")
+        .classList.remove("hidden");
+
+     setSteps(getStepNumber("blast"));
+
+      return;
+    }
+
+
+    // Kalau Blast mati → langsung selesai
+
+    renderLessons();
+
+    show("homePage");
 
   });
 
@@ -786,36 +1269,42 @@ document
 // ==================================================
 // BUKA BLAST ROOM
 // ==================================================
-
 document
   .getElementById("blastBtn")
   .addEventListener("click", async function() {
 
     try {
 
-      const materialsSnapshot =
-        await getDocs(
-          collection(db, "materials")
-        );
+      const materialIds = {
+        1: "MuBW6LqTMRuTUraGuEtd",
+        2: "QXquAe93GYRxanmUAiiJ",
+        3: "vIIhHsM7W05EktJyLEDT",
+        4: "WwbP11SpZDGRg3UvQSMc"
+      };
 
-      if (materialsSnapshot.empty) {
+      const materialRef = doc(
+        db,
+        "materials",
+        materialIds[currentLesson.id]
+      );
 
+      const materialSnapshot =
+        await getDoc(materialRef);
+
+      if (!materialSnapshot.exists()) {
         alert("Blast Room durung dipasang.");
         return;
-
       }
 
       const data =
-        materialsSnapshot.docs[0].data();
+        materialSnapshot.data();
 
       const blastUrl =
         data.blastUrl || "";
 
       if (!blastUrl) {
-
         alert("Blast Room durung dipasang.");
         return;
-
       }
 
       window.location.href = blastUrl;
@@ -834,7 +1323,6 @@ document
     }
 
   });
-
 
 // ==================================================
 // SELESAI MATERI
@@ -949,14 +1437,6 @@ document.getElementById("cancelStudentBtn").addEventListener("click", function()
   document.getElementById("addStudentForm").classList.add("hidden");
 });
 
-// TAMBAH MATERI - BUKA FORM
-
-document.getElementById("addMaterialBtn").addEventListener("click", function() {
-
-  document.getElementById("addMaterialForm").classList.remove("hidden");
-
-});
-
 // EDIT MATERI
 
 document.addEventListener("click", async function(event) {
@@ -966,7 +1446,18 @@ document.addEventListener("click", async function(event) {
     const materialId =
       event.target.dataset.id;
 
-      currentEditingMaterialId = materialId;
+    currentEditingEditButton =
+      event.target;
+
+    currentEditingMaterialId =
+      materialId;
+
+    document
+  .getElementById("materialListCard")
+  .classList.add("hidden");
+
+    event.target.classList.add("hidden");
+
     try {
 
       const materialDoc =
@@ -988,6 +1479,15 @@ document.addEventListener("click", async function(event) {
       document.getElementById("editMaterialContent").value =
         data.content || "";
 
+document.getElementById("editMaterialStageTitle").value =
+  data.materialStageTitle || "📖 Materi Pembelajaran";
+
+document.getElementById("editMaterialNote").value =
+  data.materialNote || "Wacanen materi kanthi teliti sadurunge nerusake menyang video simakan.";
+
+document.getElementById("editMaterialButtonText").value =
+  data.materialButtonText || "Sabanjure: Video Simakan →";
+
       document
         .getElementById("editMaterialForm")
         .classList.remove("hidden");
@@ -1003,6 +1503,19 @@ document.addEventListener("click", async function(event) {
   }
 
 });
+document
+  .getElementById("editMaterialBtn")
+  .addEventListener("click", function() {
+
+    document
+      .getElementById("editMaterialForm")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("editMaterialBtn")
+      .classList.add("hidden");
+
+  });
 // SIMPAN PERUBAHAN MATERI
 
 document
@@ -1019,6 +1532,14 @@ document
 
     const content =
       document.getElementById("editMaterialContent").value.trim();
+      const stageTitle =
+  document.getElementById("editMaterialStageTitle").value.trim();
+
+const note =
+  document.getElementById("editMaterialNote").value.trim();
+
+const buttonText =
+  document.getElementById("editMaterialButtonText").value.trim();
 
     if (!title || !description || !content) {
       alert("Kabeh data materi kudu diisi.");
@@ -1028,14 +1549,17 @@ document
     try {
 
       await setDoc(
-        doc(db, "materials", currentEditingMaterialId),
-        {
-          title: title,
-          description: description,
-          content: content
-        },
-        { merge: true }
-      );
+  doc(db, "materials", currentEditingMaterialId),
+  {
+    title: title,
+    description: description,
+    content: content,
+    materialStageTitle: stageTitle,
+    materialNote: note,
+    materialButtonText: buttonText
+  },
+  { merge: true }
+);
 
       alert("Materi berhasil diperbarui!");
 
@@ -1058,52 +1582,22 @@ document
 
 });
 
-// TAMBAH MATERI - BATAL
+// EDIT MATERI - BATAL
 
-document.getElementById("cancelMaterialBtn").addEventListener("click", function() {
+document
+  .getElementById("cancelEditMaterialBtn")
+  .addEventListener("click", function() {
 
-  document.getElementById("addMaterialForm").classList.add("hidden");
+    document
+      .getElementById("editMaterialForm")
+      .classList.add("hidden");
 
-});
-// SIMPAN MATERI
+    document
+      .getElementById("editMaterialBtn")
+      .classList.remove("hidden");
 
-document.getElementById("materialForm").addEventListener("submit", async function(event) {
+  });
 
-  event.preventDefault();
-
-  const title = document.getElementById("materialTitle").value.trim();
-  const description = document.getElementById("materialDescription").value.trim();
-  const content = document.getElementById("materialContent").value.trim();
-
-  if (!title || !description) {
-    alert("Judul lan deskripsi kudu diisi.");
-    return;
-  }
-
-  try {
-
-    await setDoc(doc(collection(db, "materials")), {
-    title: title,
-    description: description,
-   content: content,
-    createdAt: new Date().toISOString()
-    });
-
-    alert("Materi berhasil disimpan!");
-
-    document.getElementById("materialForm").reset();
-    document.getElementById("addMaterialForm").classList.add("hidden");
-
-    loadMaterials();
-
-  } catch (error) {
-
-    console.error("Gagal menyimpan materi:", error);
-    alert("Materi gagal disimpan.");
-
-  }
-
-});
 document.getElementById("studentForm").addEventListener("submit", async function(event) {
   event.preventDefault();
 
@@ -1180,6 +1674,18 @@ document
     const videoUrl =
       document.getElementById("videoUrl").value.trim();
 
+const videoTitle =
+  document.getElementById("editVideoTitle").value.trim();
+
+const videoDescription =
+  document.getElementById("editVideoDescription").value.trim();
+
+const videoCheckText =
+  document.getElementById("editVideoCheckText").value.trim();
+
+const videoButtonText =
+  document.getElementById("editVideoButtonText").value.trim();
+
     if (!videoUrl) {
       alert("Link video kudu diisi.");
       return;
@@ -1187,27 +1693,26 @@ document
 
     try {
 
-      const materialsSnapshot = await getDocs(
-        collection(db, "materials")
-      );
+  const materialId = currentEditingMaterialId;
 
-      if (materialsSnapshot.empty) {
-        alert("Materi durung ana.");
-        return;
-      }
-
-      const materialId =
-        materialsSnapshot.docs[0].id;
+if (!materialId) {
+  alert("Materi durung dipilih.");
+  return;
+}
 
       await setDoc(
-        doc(db, "materials", materialId),
-        {
-          videoUrl: videoUrl
-        },
-        {
-          merge: true
-        }
-      );
+  doc(db, "materials", materialId),
+  {
+    videoUrl: videoUrl,
+    videoTitle: videoTitle,
+    videoDescription: videoDescription,
+    videoCheckText: videoCheckText,
+    videoButtonText: videoButtonText
+  },
+  {
+    merge: true
+  }
+);
 
       alert("Video berhasil disimpan!");
 
@@ -1222,6 +1727,87 @@ document
 
     }
 
+  });
+  // VIDEO - BATAL
+
+document
+  .getElementById("cancelVideoBtn")
+  .addEventListener("click", function() {
+
+    document
+      .getElementById("videoMaterialForm")
+      .classList.add("hidden");
+
+    if (currentEditingVideoButton) {
+      currentEditingVideoButton.classList.remove("hidden");
+    }
+
+  });
+
+// EDIT VIDEO
+
+document
+  .getElementById("editVideoBtn")
+  .addEventListener("click", function() {
+
+    currentEditingVideoButton =
+      document.getElementById("editVideoBtn");
+
+    currentEditingVideoButton.classList.add("hidden");
+
+    document
+      .getElementById("videoMaterialForm")
+      .classList.remove("hidden");
+
+  });
+  // SIMPAN ALUR MATERI
+
+document
+  .getElementById("saveMaterialFlowBtn")
+  .addEventListener("click", async function() {
+
+    const enableMaterial =
+      document.getElementById("enableMaterial").checked;
+
+    const enableVideo =
+      document.getElementById("enableVideo").checked;
+
+    const enableBlast =
+      document.getElementById("enableBlast").checked;
+
+    try {
+
+     const materialId = currentEditingMaterialId;
+
+if (!materialId) {
+  alert("Materi durung dipilih.");
+  return;
+}
+
+      await setDoc(
+        doc(db, "materials", materialId),
+        {
+          enableMaterial: enableMaterial,
+          enableVideo: enableVideo,
+          enableBlast: enableBlast
+        },
+        {
+          merge: true
+        }
+      );
+
+      alert("Alur materi berhasil disimpan!");
+
+    } catch (error) {
+
+      console.error(
+        "Gagal menyimpan alur:",
+        error
+      );
+
+      alert("Alur materi gagal disimpan.");
+
+    }
   });
   // SIMPAN BLAST ROOM
 
@@ -1241,17 +1827,12 @@ document
 
     try {
 
-      const materialsSnapshot = await getDocs(
-        collection(db, "materials")
-      );
+      const materialId = currentEditingMaterialId;
 
-      if (materialsSnapshot.empty) {
-        alert("Materi durung ana.");
-        return;
-      }
-
-      const materialId =
-        materialsSnapshot.docs[0].id;
+if (!materialId) {
+  alert("Materi durung dipilih.");
+  return;
+}
 
       await setDoc(
         doc(db, "materials", materialId),

@@ -172,14 +172,100 @@
   </form>
 
 </div>
-<!-- MANAJEMEN MATERI -->
-<div class="section-title" style="margin-top:40px;">
+<!-- PILIH MATERI -->
+<div id="teacherMaterialSelector" class="content-card">
+
   <p class="eyebrow">PEMBELAJARAN</p>
-  <h2>Materi Pembelajaran</h2>
-  <p>Kelola materi sing dipelajari siswa.</p>
+  <h2>Pilih Materi</h2>
+  <p>Pilih materi sing arep dikelola.</p>
+
+  <div id="teacherMaterialChoices">
+    <!-- Materi 1–4 muncul lewat JavaScript -->
+  </div>
+
 </div>
 
-<div class="content-card">
+<div id="teacherMaterialEditor" class="hidden">
+
+  <button
+  type="button"
+  id="backToMaterialSelector"
+  class="btn secondary hidden"
+  style="margin-bottom:20px;"
+>
+  ← Kembali Pilih Materi
+</button>
+  
+<!-- PENGATURAN ALUR MATERI -->
+<div id="materialFlowForm" class="content-card">
+
+  <p class="eyebrow">ALUR PEMBELAJARAN</p>
+
+  <h2>Pengaturan Alur Materi 1</h2>
+
+  <p>
+    Pilih tahap pembelajaran yang akan ditampilkan kepada siswa.
+  </p>
+
+  <label class="check-row">
+    <input
+      type="checkbox"
+      id="enableMaterial"
+      checked
+    >
+    <span>Materi Pembelajaran</span>
+  </label>
+
+  <label class="check-row">
+    <input
+      type="checkbox"
+      id="enableVideo"
+      checked
+    >
+    <span>Video Simakan</span>
+  </label>
+
+  <label class="check-row">
+    <input
+      type="checkbox"
+      id="enableBlast"
+      checked
+    >
+    <span>Blast Room</span>
+  </label>
+
+  <button
+    type="button"
+    id="saveMaterialFlowBtn"
+    class="btn primary"
+    style="margin-top:20px;"
+  >
+    Simpan Alur
+  </button>
+
+</div>
+
+<!-- MANAJEMEN MATERI -->
+<div class="content-card" style="margin-top:40px;">
+
+  <p class="eyebrow">PEMBELAJARAN</p>
+
+  <h2>Materi Pembelajaran</h2>
+
+  <p>Kelola materi sing dipelajari siswa.</p>
+
+  <button
+    type="button"
+    id="editMaterialBtn"
+    class="btn secondary"
+    style="margin-top:10px;"
+  >
+    Edit Materi
+  </button>
+
+</div>
+
+<div id="materialListCard" class="content-card">
 
   <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:20px;">
     <div>
@@ -187,71 +273,16 @@
       <p style="margin:6px 0 0;">
         Materi pembelajaran siswa.
       </p>
+
     </div>
 
-    <button id="addMaterialBtn" class="btn primary">
-      + Tambah Materi
-    </button>
-  </div>
+</div>
 
   <div id="materialList">
     <p>Durung ana materi.</p>
   </div>
-
+  
 </div>
-
-<!-- FORM TAMBAH MATERI -->
-<div id="addMaterialForm" class="content-card hidden">
-
-  <p class="eyebrow">PEMBELAJARAN</p>
-  <h2>Tambah Materi</h2>
-
-  <form id="materialForm">
-
-    <label for="materialTitle">Judul Materi</label>
-    <input
-      id="materialTitle"
-      type="text"
-      placeholder="Contoh: Menyimak Drama Jawa Modern"
-      required
-    >
-
-    <label for="materialDescription">Deskripsi Materi</label>
-    <textarea
-      id="materialDescription"
-      rows="5"
-      placeholder="Tuliskan deskripsi materi..."
-      required
-    ></textarea>
-    <label for="materialContent">Isi Materi</label>
-
-<textarea
-  id="materialContent"
-  rows="12"
-  placeholder="Tuliskan isi materi..."
-  required
-></textarea>
-
-    <div style="display:flex; gap:10px; margin-top:20px;">
-
-      <button type="submit" class="btn primary">
-        Simpan Materi
-      </button>
-
-      <button
-        type="button"
-        id="cancelMaterialBtn"
-        class="btn secondary"
-      >
-        Batal
-      </button>
-
-    </div>
-
-    </form>
-
-</div>
-
 
 <!-- FORM EDIT MATERI -->
 <div id="editMaterialForm" class="content-card hidden">
@@ -282,6 +313,27 @@
       required
     ></textarea>
 
+<label for="editMaterialStageTitle">Judul Tahap 1</label>
+<input
+  id="editMaterialStageTitle"
+  type="text"
+  placeholder="📖 Materi Pembelajaran"
+>
+
+<label for="editMaterialNote">Cathetan Materi</label>
+<textarea
+  id="editMaterialNote"
+  rows="4"
+  placeholder="Cathetan sing diwaca siswa..."
+></textarea>
+
+<label for="editMaterialButtonText">Teks Tombol Tahap 1</label>
+<input
+  id="editMaterialButtonText"
+  type="text"
+  placeholder="Sabanjure: Video Simakan →"
+>
+
     <div style="display:flex; gap:10px; margin-top:20px;">
 
       <button type="submit" class="btn primary">
@@ -303,7 +355,26 @@
 </div>
 
 <!-- FORM VIDEO MATERI -->
-<div id="videoMaterialForm" class="content-card">
+ <div class="content-card">
+
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+
+    <div>
+      <p class="eyebrow">VIDEO PEMBELAJARAN</p>
+      <h2>Video Materi 1</h2>
+      <p>Kelola video yang bakal ditonton siswa.</p>
+    </div>
+
+        <button
+      id="editVideoBtn"
+      class="btn secondary"
+    >
+      Edit Video
+    </button>
+
+  </div>
+
+  <div id="videoMaterialForm" class="hidden">
 
   <p class="eyebrow">VIDEO PEMBELAJARAN</p>
   <h2>Video Materi 1</h2>
@@ -322,16 +393,56 @@
       placeholder="https://www.youtube.com/watch?v=..."
       required
     >
+    <label for="editVideoTitle">Judul Video</label>
+<input
+  id="editVideoTitle"
+  type="text"
+  placeholder="🎬 Video Simakan"
+>
+
+<label for="editVideoDescription">Deskripsi Video</label>
+<textarea
+  id="editVideoDescription"
+  rows="4"
+  placeholder="Deskripsi singkat video..."
+></textarea>
+
+<label for="editVideoCheckText">Teks Checklist</label>
+<input
+  id="editVideoCheckText"
+  type="text"
+  placeholder="Aku wis nyimak video kanthi premati."
+>
+
+<label for="editVideoButtonText">Teks Tombol</label>
+<input
+  id="editVideoButtonText"
+  type="text"
+  placeholder="Sabanjure: Blast Room →"
+>
 
     <div style="display:flex; gap:10px; margin-top:20px;">
 
-      <button type="submit" class="btn primary">
-        Simpan Video
-      </button>
+  <button
+    type="submit"
+    class="btn primary"
+  >
+    Simpan Video
+  </button>
 
-    </div>
+  <button
+    type="button"
+    id="cancelVideoBtn"
+    class="btn secondary"
+  >
+    Batal
+  </button>
+
+</div>
 
   </form>
+
+</div>
 
 </div>
 
@@ -391,35 +502,51 @@
           <p id="lessonDescription"></p>
         </div>
 
-        <div class="stepper">
-          <div class="step active" id="step1"><span>1</span><small>Materi</small></div>
-          <div class="line"></div>
-          <div class="step" id="step2"><span>2</span><small>Simakan</small></div>
-          <div class="line"></div>
-          <div class="step" id="step3">
-  <span>3</span>
-  <small>Blast Room</small>
+      <div class="stepper">
+
+  <div class="step active" id="step1">
+    <span>1</span>
+    <small class="step-label">Materi</small>
+  </div>
+
+  <div class="line"></div>
+
+  <div class="step" id="step2">
+    <span>2</span>
+    <small class="step-label">Simakan</small>
+  </div>
+
+  <div class="line"></div>
+
+  <div class="step" id="step3">
+    <span>3</span>
+    <small class="step-label">Blast Room</small>
+  </div>
+
 </div>
-        </div>
 
-        <article id="materialStep" class="content-card">
-          <p class="eyebrow">TAHAP 1</p>
-          <h2>📖 Materi Pembelajaran</h2>
-          <p id="materialText"></p>
+<article id="materialStep" class="content-card hidden">
 
-          <div class="info-box">
-            <strong>Cathetan:</strong>
-            <p>Wacanen materi kanthi teliti sadurunge nerusake menyang video simakan.</p>
-          </div>
+  <h2 id="materialTitleDisplay">
+    📖 Materi Pembelajaran
+  </h2>
+  <p id="materialText"></p>
 
-          <button id="toVideoBtn" class="btn primary">Sabanjure: Video Simakan →</button>
-        </article>
+  <div class="info-box">
+    <strong>Cathetan:</strong>
+    <p id="materialNote"></p>
+  </div>
+
+  <button id="toVideoBtn" class="btn primary">
+    <span id="materialButtonText">Sabanjure: Video Simakan →</span>
+  </button>
+</article>
 
         <article id="videoStep" class="content-card hidden">
-          <p class="eyebrow">TAHAP 2</p>
-          <h2>🎬 Video Simakan</h2>
-          <p>Simak video kanthi premati. Ing versi sabanjure, video bisa diganti nganggo video pembelajaranmu dhewe.</p>
-
+          <h2 id="videoTitleDisplay">🎬 Video Simakan</h2>
+<p id="videoDescriptionDisplay">
+  Simak video kanthi premati. Ing versi sabanjure, video bisa diganti nganggo video pembelajaranmu dhewe.
+</p>
           <div id="videoContainer" class="video-placeholder">
 
   <p>Video pembelajaran durung dipasang.</p>
@@ -428,17 +555,19 @@
 
           <label class="check-row">
             <input type="checkbox" id="watchedCheck">
-            <span>Aku wis nyimak video kanthi premati.</span>
+            <span id="videoCheckText">
+  Aku wis nyimak video kanthi premati.
+</span>
           </label>
 
           <button id="toQuizBtn" class="btn primary" disabled>
-  Sabanjure: Blast Room →
+  <span id="videoButtonText">
+    Sabanjure: Blast Room →
+  </span>
 </button>
         </article>
 
         <article id="quizStep" class="content-card hidden">
-
-  <p class="eyebrow">TAHAP 3</p>
 
   <h2>🎮 Blast Room</h2>
 
