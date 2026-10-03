@@ -300,13 +300,13 @@ function renderLessons() {
       <div>
         <h3>${title}</h3>
 
-        <p>
-          ${
-            completed
-              ? "Wis rampung"
-              : description
-          }
-        </p>
+        <div class="lesson-description">
+  ${
+    completed
+      ? "Wis rampung"
+      : description
+  }
+</div>
       </div>
 
       <button
@@ -909,8 +909,8 @@ currentLesson.materialButtonText =
   document.getElementById("lessonTitle").textContent =
     currentLesson.title;
 
-  document.getElementById("lessonDescription").textContent =
-    currentLesson.description;
+document.getElementById("lessonDescription").innerHTML =
+  currentLesson.description;
 
 document.getElementById("materialText").innerHTML =
   currentLesson.material || "";
