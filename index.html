@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sinau Nyemak Basa Jawa</title>
   <link rel="stylesheet" href="style.css">
+  <link
+  href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css"
+  rel="stylesheet"
+/>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js">
+</script>
 </head>
 <body>
   <div id="app">
@@ -214,33 +222,41 @@
   <p>
     Pilih tahap pasinaon sing bakal ditampilake marang siswa.
   </p>
+<label class="check-row">
+  <input type="checkbox" id="enableMaterial" checked>
+  <span>Materi Pembelajaran</span>
+</label>
 
-  <label class="check-row">
-    <input
-      type="checkbox"
-      id="enableMaterial"
-      checked
-    >
-    <span>Materi Pasinaon</span>
-  </label>
+<input
+  type="text"
+  id="materialStepLabel"
+  placeholder="Nama tahap materi"
+  value="Materi"
+>
 
-  <label class="check-row">
-    <input
-      type="checkbox"
-      id="enableVideo"
-      checked
-    >
-    <span>Video Simakan</span>
-  </label>
+<label class="check-row">
+  <input type="checkbox" id="enableVideo" checked>
+  <span>Video Simakan</span>
+</label>
 
-  <label class="check-row">
-    <input
-      type="checkbox"
-      id="enableBlast"
-      checked
-    >
-    <span>Blast Room</span>
-  </label>
+<input
+  type="text"
+  id="videoStepLabel"
+  placeholder="Nama tahap simakan"
+  value="Simakan"
+>
+
+<label class="check-row">
+  <input type="checkbox" id="enableBlast" checked>
+  <span>Asesmen</span>
+</label>
+
+<input
+  type="text"
+  id="blastStepLabel"
+  placeholder="Nama tahap asesmen"
+  value="Asesmen"
+>
 
   <button
     type="button"
@@ -307,27 +323,13 @@
       required
     >
 
-    <label for="editMaterialDescription">Deskripsi Materi</label>
-    <textarea
-      id="editMaterialDescription"
-      rows="5"
-      required
-    ></textarea>
+   <label>Deskripsi Materi</label>
 
-    <label for="editMaterialContent">Isi Materi</label>
+<div id="editMaterialDescription"></div>
 
-<div class="editor-toolbar">
-  <button type="button" data-format="bold"><b>B</b></button>
-  <button type="button" data-format="italic"><i>I</i></button>
-  <button type="button" data-format="heading">H</button>
-  <button type="button" data-format="bullet">• List</button>
-</div>
+<label for="editMaterialContent">Isi Materi</label>
 
-<textarea 
-  id="editMaterialContent" 
-  rows="12" 
-  required
-></textarea>
+<div id="editMaterialContent"></div>
 
 <label for="editMaterialStageTitle">Judul Tahap 1</label>
 <input
@@ -416,25 +418,19 @@
   placeholder="🎬 Video Simakan"
 >
 
-<label for="editVideoDescription">Deskripsi Video</label>
-<textarea
-  id="editVideoDescription"
-  rows="4"
-  placeholder="Deskripsi singkat video..."
-></textarea>
+<label>Deskripsi Video</label>
 
-<label for="editVideoCheckText">Teks Checklist</label>
-<input
-  id="editVideoCheckText"
-  type="text"
-  placeholder="Aku wis nyimak video kanthi premati."
->
+<div id="editVideoDescription"></div>
+
+<label>Teks Checklist</label>
+
+<div id="editVideoCheckText"></div>
 
 <label for="editVideoButtonText">Teks Tombol</label>
 <input
   id="editVideoButtonText"
   type="text"
-  placeholder="Sabanjure: Blast Room →"
+  placeholder="Sabanjure: Asesmen →"
 >
 
     <div style="display:flex; gap:10px; margin-top:20px;">
@@ -462,39 +458,85 @@
 
 </div>
 
-<!-- FORM BLAST ROOM -->
-<div id="blastRoomForm" class="content-card">
+<!-- FORM EVALUASI -->
+<div class="content-card">
 
-  <p class="eyebrow">EVALUASI</p>
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
 
-  <h2>Blast Room Materi 1</h2>
+    <div>
+      <p class="eyebrow">ASESMEN</p>
+      <h2>Asesmen Materi 1</h2>
+      <p>Kelola tampilan asesmen kanggo siswa.</p>
+    </div>
 
-  <p>
-    Masukkan link Blast Room yang akan digunakan siswa.
-    Kode permainan disampaikan langsung oleh guru.
-  </p>
+    <button
+      id="editEvaluationBtn"
+      class="btn secondary"
+    >
+      Edit Asesmen
+    </button>
 
-  <form id="blastForm">
+  </div>
 
-    <label for="blastUrl">Link Blast Room</label>
+  <div id="evaluationForm" class="hidden">
 
+  <form id="evaluationFormElement">
+
+    <label for="evaluationUrl">Link Asesmen</label>
     <input
-      id="blastUrl"
+      id="evaluationUrl"
       type="url"
       placeholder="https://..."
       required
     >
 
-    <div style="display:flex; gap:10px; margin-top:20px;">
+    <label for="evaluationTitle">Judul Asesmen</label>
+    <input
+      id="evaluationTitle"
+      type="text"
+      placeholder="📝 Asesmen Materi"
+    >
 
-      <button
-        type="submit"
-        class="btn primary"
-      >
-        Simpan Blast Room
-      </button>
+   <label>Deskripsi Asesmen</label>
 
-    </div>
+<div id="evaluationDescription"></div>
+
+    <label for="evaluationBoxTitle">Judul Kotak Asesmen</label>
+    <input
+      id="evaluationBoxTitle"
+      type="text"
+      placeholder="Asesmen Materi"
+    >
+
+   <label>Keterangan Asesmen</label>
+
+<div id="evaluationBoxDescription"></div>
+
+    <label for="evaluationButtonText">Teks Tombol</label>
+    <input
+      id="evaluationButtonText"
+      type="text"
+      placeholder="Mulai Asesmen ↗"
+    >
+
+   <div style="display:flex; gap:10px; margin-top:20px;">
+
+  <button
+    type="submit"
+    class="btn primary"
+  >
+    Simpan Asesmen
+  </button>
+
+  <button
+    type="button"
+    id="cancelEvaluationBtn"
+    class="btn secondary"
+  >
+    Batal
+  </button>
+
+</div>
 
   </form>
 
@@ -536,7 +578,7 @@
 
   <div class="step" id="step3">
     <span>3</span>
-    <small class="step-label">Blast Room</small>
+    <small class="step-label">Asesmen</small>
   </div>
 
 </div>
@@ -578,36 +620,39 @@
 
           <button id="toQuizBtn" class="btn primary" disabled>
   <span id="videoButtonText">
-    Sabanjure: Blast Room →
+    Sabanjure: Asesmen →
   </span>
 </button>
         </article>
 
         <article id="quizStep" class="content-card hidden">
 
-  <h2>🎮 Blast Room</h2>
+  <h2 id="blastTitleDisplay">📝 Asesmen</h2>
 
-  <p>
+  <p id="blastDescriptionDisplay">
     Saiki wayahe ngukur pemahamanmu
     saka materi lan video sing wis disimak.
   </p>
 
   <div class="quiz-box">
 
-    <span>BLAST ROOM</span>
+    <span>ASESMEN</span>
 
-    <h3>Evaluasi Materi</h3>
+    <h3 id="blastBoxTitleDisplay">
+      Asesmen Materi
+    </h3>
 
-    <p>
-      Bukak Blast Room lan lebokna kode permainan
-      sing diwenehake dening guru.
-    </p>
+    <p id="blastBoxDescriptionDisplay">
+  Bukak asesmen lan tindakake pandhuan sing diwenehake dening guru.
+</p>
 
     <button
       id="blastBtn"
       class="btn secondary"
     >
-      Bukak Blast Room ↗
+      <span id="blastButtonTextDisplay">
+        Mulai Asesmen ↗
+      </span>
     </button>
 
   </div>

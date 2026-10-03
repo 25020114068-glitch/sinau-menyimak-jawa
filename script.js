@@ -93,6 +93,111 @@ let currentEditingEditButton = null;
 
 let currentEditingVideoButton = null;
 
+let materialQuill = null;
+
+let descriptionQuill = null;
+
+let videoDescriptionQuill = null;
+
+let videoCheckQuill = null;
+
+let evaluationDescriptionQuill = null;
+
+let evaluationBoxDescriptionQuill = null;
+
+// ==================================================
+// QUILL EDITOR MATERI
+// ==================================================
+
+materialQuill = new Quill("#editMaterialContent", {
+  theme: "snow",
+  modules: {
+    toolbar: [
+      ["bold", "italic", "underline"],
+      [
+        {
+          header: [1, 2, 3, false]
+        }
+      ],
+      [
+        {
+          list: "ordered"
+        },
+        {
+          list: "bullet"
+        }
+      ],
+      ["link"],
+      ["clean"]
+    ]
+  },
+  placeholder: "Tulis isi materi ing kene..."
+});
+
+descriptionQuill = new Quill("#editMaterialDescription", {
+  theme: "snow",
+  modules: {
+    toolbar: [
+      ["bold", "italic", "underline"],
+      [
+        {
+          header: [1, 2, 3, false]
+        }
+      ],
+      [
+        {
+          list: "ordered"
+        },
+        {
+          list: "bullet"
+        }
+      ],
+      ["link"],
+      ["clean"]
+    ]
+  },
+  placeholder: "Tulis deskripsi materi ing kene..."
+});
+
+videoDescriptionQuill = new Quill("#editVideoDescription", {
+  theme: "snow",
+  modules: {
+    toolbar: [
+      ["bold", "italic", "underline"]
+    ]
+  },
+  placeholder: "Tulis deskripsi video ing kene..."
+});
+
+videoCheckQuill = new Quill("#editVideoCheckText", {
+  theme: "snow",
+  modules: {
+    toolbar: [
+      ["bold", "italic", "underline"]
+    ]
+  },
+  placeholder: "Tulis teks checklist ing kene..."
+});
+
+evaluationDescriptionQuill = new Quill("#evaluationDescription", {
+  theme: "snow",
+  modules: {
+    toolbar: [
+      ["bold", "italic", "underline"]
+    ]
+  },
+  placeholder: "Tulis deskripsi asesmen ing kene..."
+});
+
+evaluationBoxDescriptionQuill = new Quill("#evaluationBoxDescription", {
+  theme: "snow",
+  modules: {
+    toolbar: [
+      ["bold", "italic", "underline"]
+    ]
+  },
+  placeholder: "Tulis keterangan asesmen ing kene..."
+});
 
 // ==================================================
 // FUNGSI PINDAH HALAMAN
@@ -514,11 +619,13 @@ document
         document.getElementById("editMaterialTitle").value =
           data.title || "";
 
-        document.getElementById("editMaterialDescription").value =
-          data.description || "";
+descriptionQuill.clipboard.dangerouslyPasteHTML(
+  data.description || ""
+);
 
-        document.getElementById("editMaterialContent").value =
-          data.content || "";
+        materialQuill.clipboard.dangerouslyPasteHTML(
+  data.content || ""
+);
 
         document.getElementById("editMaterialStageTitle").value =
           data.materialStageTitle || "📖 Materi Pasinaon";
@@ -541,24 +648,43 @@ document
         document.getElementById("editVideoTitle").value =
           data.videoTitle || "🎬 Video Simakan";
 
-        document.getElementById("editVideoDescription").value =
-          data.videoDescription ||
-          "Simak video kanthi premati.";
+      videoDescriptionQuill.clipboard.dangerouslyPasteHTML(
+  data.videoDescription ||
+  "Simak video kanthi premati."
+);
 
-        document.getElementById("editVideoCheckText").value =
-          data.videoCheckText ||
-          "Aku wis nyimak video kanthi premati.";
+videoCheckQuill.clipboard.dangerouslyPasteHTML(
+  data.videoCheckText ||
+  "Aku wis nyimak video kanthi premati."
+);
 
         document.getElementById("editVideoButtonText").value =
           data.videoButtonText ||
-          "Sabanjure: Blast Room →";
+          "Sabanjure: Asesmen →";
 
         // ==========================
-        // BLAST ROOM
-        // ==========================
+// EVALUASI
+// ==========================
 
-        document.getElementById("blastUrl").value =
-          data.blastUrl || "";
+document.getElementById("evaluationUrl").value =
+  data.evaluationUrl || "";
+
+document.getElementById("evaluationTitle").value =
+  data.evaluationTitle || "📝 Asesmen";
+
+evaluationDescriptionQuill.clipboard.dangerouslyPasteHTML(
+  data.evaluationDescription || ""
+);
+
+document.getElementById("evaluationBoxTitle").value =
+  data.evaluationBoxTitle || "Asesmen Materi";
+
+evaluationBoxDescriptionQuill.clipboard.dangerouslyPasteHTML(
+  data.evaluationBoxDescription || ""
+);
+
+document.getElementById("evaluationButtonText").value =
+  data.evaluationButtonText || "Mulai Asesmen ↗";
 
         // ==========================
         // ALUR
@@ -572,6 +698,15 @@ document
 
         document.getElementById("enableBlast").checked =
           data.enableBlast !== false;
+          
+          document.getElementById("materialStepLabel").value =
+  data.materialStepLabel || "Materi";
+
+document.getElementById("videoStepLabel").value =
+  data.videoStepLabel || "Simakan";
+
+document.getElementById("blastStepLabel").value =
+  data.blastStepLabel || "Asesmen";
 
 // ==========================
 // TAMPILKAN EDITOR
@@ -701,6 +836,16 @@ currentLesson.enableVideo =
 
 currentLesson.enableBlast =
   data.enableBlast !== false;
+
+currentLesson.materialStepLabel =
+  data.materialStepLabel || "Materi";
+
+currentLesson.videoStepLabel =
+  data.videoStepLabel || "Simakan";
+
+currentLesson.blastStepLabel =
+  data.blastStepLabel || "Asesmen";
+
   currentLesson.videoTitle =
   data.videoTitle || "🎬 Video Simakan";
 
@@ -714,7 +859,27 @@ currentLesson.videoCheckText =
 
 currentLesson.videoButtonText =
   data.videoButtonText ||
-  "Sabanjure: Blast Room →";
+  "Sabanjure: Asesmen →";
+
+ currentLesson.evaluationTitle =
+  data.evaluationTitle ||
+  "📝 Asesmen";
+
+currentLesson.evaluationDescription =
+  data.evaluationDescription ||
+  "Saiki wayahe ngukur pemahamanmu saka materi lan video sing wis disimak.";
+
+currentLesson.evaluationBoxTitle =
+  data.evaluationBoxTitle ||
+  "Asesmen Materi";
+
+currentLesson.evaluationBoxDescription =
+  data.evaluationBoxDescription ||
+  "Bukak evaluasi lan tindakake pandhuan sing diwenehake.";
+
+currentLesson.evaluationButtonText =
+  data.evaluationButtonText ||
+  "Mulai Asesmen ↗";
 
 currentLesson.materialStageTitle =
   data.materialStageTitle || "📖 Materi Pasinaon";
@@ -747,8 +912,8 @@ currentLesson.materialButtonText =
   document.getElementById("lessonDescription").textContent =
     currentLesson.description;
 
-  document.getElementById("materialText").innerHTML =
-    markdownToHtml(currentLesson.material);
+document.getElementById("materialText").innerHTML =
+  currentLesson.material || "";
 
 document.getElementById("materialTitleDisplay").textContent =
   currentLesson.materialStageTitle;
@@ -761,14 +926,30 @@ document.getElementById("materialButtonText").textContent =
 document.getElementById("videoTitleDisplay").textContent =
   currentLesson.videoTitle;
 
-document.getElementById("videoDescriptionDisplay").textContent =
+document.getElementById("videoDescriptionDisplay").innerHTML =
   currentLesson.videoDescription;
 
-document.getElementById("videoCheckText").textContent =
+document.getElementById("videoCheckText").innerHTML =
   currentLesson.videoCheckText;
 
 document.getElementById("videoButtonText").textContent =
   currentLesson.videoButtonText;
+
+document.getElementById("blastTitleDisplay").textContent =
+  currentLesson.evaluationTitle;
+
+document.getElementById("blastDescriptionDisplay").innerHTML =
+  currentLesson.evaluationDescription;
+
+document.getElementById("blastBoxTitleDisplay").textContent =
+  currentLesson.evaluationBoxTitle;
+
+document.getElementById("blastBoxDescriptionDisplay").innerHTML =
+  currentLesson.evaluationBoxDescription;
+
+document.getElementById("blastButtonTextDisplay").textContent =
+  currentLesson.evaluationButtonText;
+
   document
   .getElementById("materialStep")
   .classList.add("hidden");
@@ -882,17 +1063,20 @@ function setSteps(active) {
 
     if (label) {
 
-      if (type === "material") {
-        label.textContent = "Materi";
-      }
+if (type === "material") {
+  label.textContent =
+    currentLesson.materialStepLabel || "Materi";
+}
 
-      if (type === "video") {
-        label.textContent = "Simakan";
-      }
+if (type === "video") {
+  label.textContent =
+    currentLesson.videoStepLabel || "Simakan";
+}
 
-      if (type === "blast") {
-        label.textContent = "Blast Room";
-      }
+if (type === "blast") {
+  label.textContent =
+    currentLesson.blastStepLabel || "Asesmen";
+}
 
     }
 
@@ -1243,7 +1427,7 @@ document
       .classList.add("hidden");
 
 
-    // Kalau Blast aktif → buka Blast Room
+    // Kalau Blast aktif → buka Evaluasi
 
     if (currentLesson.enableBlast) {
 
@@ -1265,10 +1449,8 @@ document
 
   });
 
+// BUKA EVALUASI
 
-// ==================================================
-// BUKA BLAST ROOM
-// ==================================================
 document
   .getElementById("blastBtn")
   .addEventListener("click", async function() {
@@ -1292,32 +1474,32 @@ document
         await getDoc(materialRef);
 
       if (!materialSnapshot.exists()) {
-        alert("Blast Room durung dipasang.");
+        alert("Link Asesmen durung dipasang.");
         return;
       }
 
       const data =
         materialSnapshot.data();
 
-      const blastUrl =
-        data.blastUrl || "";
+      const evaluationUrl =
+        data.evaluationUrl || "";
 
-      if (!blastUrl) {
-        alert("Blast Room durung dipasang.");
+      if (!evaluationUrl) {
+        alert("Link Asesmen durung dipasang.");
         return;
       }
 
-      window.location.href = blastUrl;
+      window.location.href = evaluationUrl;
 
     } catch (error) {
 
       console.error(
-        "Gagal membuka Blast Room:",
+        "Gagal membuka Evaluasi:",
         error
       );
 
       alert(
-        "Blast Room gagal dibuka."
+        "Asesmen gagal dibuka."
       );
 
     }
@@ -1473,11 +1655,13 @@ document.addEventListener("click", async function(event) {
       document.getElementById("editMaterialTitle").value =
         data.title || "";
 
-      document.getElementById("editMaterialDescription").value =
-        data.description || "";
+    descriptionQuill.clipboard.dangerouslyPasteHTML(
+  data.description || ""
+);
 
-      document.getElementById("editMaterialContent").value =
-        data.content || "";
+     materialQuill.clipboard.dangerouslyPasteHTML(
+  data.content || ""
+);
 
 document.getElementById("editMaterialStageTitle").value =
   data.materialStageTitle || "📖 Materi Pasinaon";
@@ -1527,11 +1711,12 @@ document
     const title =
       document.getElementById("editMaterialTitle").value.trim();
 
-    const description =
-      document.getElementById("editMaterialDescription").value.trim();
+   const description =
+  descriptionQuill.root.innerHTML.trim();
 
     const content =
-      document.getElementById("editMaterialContent").value.trim();
+  materialQuill.root.innerHTML.trim();
+
       const stageTitle =
   document.getElementById("editMaterialStageTitle").value.trim();
 
@@ -1541,7 +1726,11 @@ const note =
 const buttonText =
   document.getElementById("editMaterialButtonText").value.trim();
 
-    if (!title || !description || !content) {
+    if (
+  !title ||
+  !descriptionQuill.getText().trim() ||
+  !materialQuill.getText().trim()
+) {
       alert("Kabeh data materi kudu diisi.");
       return;
     }
@@ -1678,10 +1867,10 @@ const videoTitle =
   document.getElementById("editVideoTitle").value.trim();
 
 const videoDescription =
-  document.getElementById("editVideoDescription").value.trim();
+  videoDescriptionQuill.root.innerHTML.trim();
 
 const videoCheckText =
-  document.getElementById("editVideoCheckText").value.trim();
+  videoCheckQuill.root.innerHTML.trim();
 
 const videoButtonText =
   document.getElementById("editVideoButtonText").value.trim();
@@ -1769,6 +1958,15 @@ document
     const enableMaterial =
       document.getElementById("enableMaterial").checked;
 
+      const materialStepLabel =
+  document.getElementById("materialStepLabel").value.trim();
+
+const videoStepLabel =
+  document.getElementById("videoStepLabel").value.trim();
+
+const blastStepLabel =
+  document.getElementById("blastStepLabel").value.trim();
+
     const enableVideo =
       document.getElementById("enableVideo").checked;
 
@@ -1785,16 +1983,20 @@ if (!materialId) {
 }
 
       await setDoc(
-        doc(db, "materials", materialId),
-        {
-          enableMaterial: enableMaterial,
-          enableVideo: enableVideo,
-          enableBlast: enableBlast
-        },
-        {
-          merge: true
-        }
-      );
+  doc(db, "materials", materialId),
+  {
+    enableMaterial: enableMaterial,
+    enableVideo: enableVideo,
+    enableBlast: enableBlast,
+
+    materialStepLabel: materialStepLabel,
+    videoStepLabel: videoStepLabel,
+    blastStepLabel: blastStepLabel
+  },
+  {
+    merge: true
+  }
+);
 
       alert("Alur materi berhasil disimpan!");
 
@@ -1809,108 +2011,105 @@ if (!materialId) {
 
     }
   });
-  // SIMPAN BLAST ROOM
+  
+// SIMPAN EVALUASI
 
 document
-  .getElementById("blastForm")
+  .getElementById("evaluationFormElement")
   .addEventListener("submit", async function(event) {
 
     event.preventDefault();
+const evaluationUrl =
+  document.getElementById("evaluationUrl").value.trim();
 
-    const blastUrl =
-      document.getElementById("blastUrl").value.trim();
+const evaluationTitle =
+  document.getElementById("evaluationTitle").value.trim();
 
-    if (!blastUrl) {
-      alert("Link Blast Room kudu diisi.");
-      return;
-    }
+const evaluationDescription =
+  evaluationDescriptionQuill.root.innerHTML.trim();
+
+  const evaluationBoxTitle =
+  document.getElementById("evaluationBoxTitle").value.trim();
+
+const evaluationBoxDescription =
+  evaluationBoxDescriptionQuill.root.innerHTML.trim();
+
+const evaluationButtonText =
+  document.getElementById("evaluationButtonText").value.trim();
+
+if (!evaluationUrl) {
+  alert("Link Asesmen kudu diisi.");
+  return;
+}
 
     try {
 
       const materialId = currentEditingMaterialId;
 
-if (!materialId) {
-  alert("Materi durung dipilih.");
-  return;
-}
+      if (!materialId) {
+        alert("Materi durung dipilih.");
+        return;
+      }
 
       await setDoc(
         doc(db, "materials", materialId),
         {
-          blastUrl: blastUrl
+          evaluationUrl: evaluationUrl,
+          evaluationTitle: evaluationTitle,
+          evaluationDescription: evaluationDescription,
+          evaluationBoxTitle: evaluationBoxTitle,
+          evaluationBoxDescription: evaluationBoxDescription,
+          evaluationButtonText: evaluationButtonText
         },
         {
           merge: true
         }
       );
 
-      alert("Blast Room berhasil disimpan!");
+      alert("Asesmen berhasil disimpan!");
 
     } catch (error) {
 
       console.error(
-        "Gagal menyimpan Blast Room:",
+        "Gagal menyimpan Asesmen:",
         error
       );
 
-      alert("Blast Room gagal disimpan.");
+      alert("Asesmen gagal disimpan.");
 
     }
 
   });
 
-  document
-  .querySelectorAll(".editor-toolbar button")
-  .forEach(button => {
+  // EDIT ASESMEN
 
-    button.addEventListener("click", function() {
+document
+  .getElementById("editEvaluationBtn")
+  .addEventListener("click", function() {
 
-      const textarea =
-        document.getElementById("editMaterialContent");
+    document
+      .getElementById("editEvaluationBtn")
+      .classList.add("hidden");
 
-      const format =
-        button.dataset.format;
+    document
+      .getElementById("evaluationForm")
+      .classList.remove("hidden");
 
-      const start =
-        textarea.selectionStart;
+  });
 
-      const end =
-        textarea.selectionEnd;
 
-      const selectedText =
-        textarea.value.substring(start, end);
+// ASESMEN - BATAL
 
-      if (!selectedText) {
-        alert("Blok teks sing arep diformat dhisik.");
-        return;
-      }
+document
+  .getElementById("cancelEvaluationBtn")
+  .addEventListener("click", function() {
 
-      let formattedText = selectedText;
+    document
+      .getElementById("evaluationForm")
+      .classList.add("hidden");
 
-      if (format === "bold") {
-        formattedText = `**${selectedText}**`;
-      }
-
-      if (format === "italic") {
-        formattedText = `*${selectedText}*`;
-      }
-
-      if (format === "heading") {
-        formattedText = `### ${selectedText}`;
-      }
-
-      if (format === "bullet") {
-        formattedText = `- ${selectedText}`;
-      }
-
-      textarea.setRangeText(
-        formattedText,
-        start,
-        end,
-        "select"
-      );
-
-      textarea.focus();
-    });
+    document
+      .getElementById("editEvaluationBtn")
+      .classList.remove("hidden");
 
   });
